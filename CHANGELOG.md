@@ -6,7 +6,10 @@ Mỗi version ghi thay đổi ở Core, template, adapter hoặc checker. Rule h
 
 - Adapter Claude Code: subagent `implementer` khai `model: sonnet` (đổi được, xem ghi chú trong file) và hướng dẫn "cách làm việc gọn".
 - Project Layer: thêm mục **Test policy** vào `templates/docs/ai/project-profile.md` (§8): chạy test liên quan trong vòng sửa, toàn bộ suite một lần trước READY và một lần sau mỗi vòng fix review.
-- Đóng gói thành starter kit: Core tách khỏi chi tiết project (bỏ một câu project-specific ở `workflow.md` §3 và ở `execution-profiles.md`; không đổi rule), checker đọc `framework.config.json`, thêm adapter Copilot (chưa kiểm chứng), tài liệu cơ chế và hướng dẫn cài / nâng version.
+- Đóng gói thành starter kit: Core tách khỏi chi tiết project (bỏ một câu project-specific ở `workflow.md` §3 và ở `execution-profiles.md`; không đổi rule), checker đọc `framework.config.json`, thêm adapter Copilot, tài liệu cơ chế và hướng dẫn cài / nâng version.
+- Nhiều IMPLEMENTER (không đổi Core): mục "Danh sách IMPLEMENTER" trong template project-profile §7, field `Implementer` trong task template, adapter Claude Code ghi cách ORCHESTRATOR chọn.
+- Adapter Copilot đã pilot (gói Free, 2026-09-29; số đo trong `adapters/copilot/README.md`); thêm cách ORCHESTRATOR gọi non-interactive.
+- Adapter Codex dạng template, CHƯA KIỂM CHỨNG (`adapters/codex/README.md`); checker nhận adapter `codex`.
 - Framework Core §1–§9 không đổi nội dung so với v4.1; chỉ đổi metadata.
 
 ## v4.1 — 2026-09-26

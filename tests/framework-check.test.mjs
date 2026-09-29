@@ -99,6 +99,19 @@ test('minimal project with both adapters passes', () => {
   assert.match(out, /PASS: \.github\/agents\/implementer\.agent\.md/);
 });
 
+test('codex adapter enabled passes without extra files', () => {
+  const dir = makeProject({ adapters: ['claude-code', 'copilot', 'codex'] });
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+});
+
+test('codex adapter alone passes', () => {
+  const dir = makeProject({ adapters: [] });
+  edit(dir, 'framework.config.json', (s) => s.replace('"adapters": []', '"adapters": ["codex"]'));
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+});
+
 test('missing required file fails', () => {
   const dir = makeProject();
   fs.rmSync(path.join(dir, 'docs/ai/project-profile.md'));

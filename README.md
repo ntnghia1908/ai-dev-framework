@@ -18,7 +18,8 @@ templates/             Project Layer, có chỗ trống <!-- FILL: ... -->
   docs/workflow/current-state.md  docs/tasks/_template.md
 adapters/              Tool Adapter, chọn theo tool đang dùng
   claude-code/         rules + subagent implementer
-  copilot/             pointer + custom agent implementer (CHƯA KIỂM CHỨNG)
+  copilot/             pointer + custom agent implementer (đã pilot gói Free 2026-09-29)
+  codex/               README: Codex CLI làm IMPLEMENTER (CHƯA KIỂM CHỨNG)
 scripts/framework-check.mjs        checker cấu trúc, Node stdlib, đọc framework.config.json
 tests/                 kiểm chính checker
 docs/                  mechanism, install-new-project, install-existing-project, upgrade

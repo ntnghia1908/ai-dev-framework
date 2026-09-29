@@ -8,7 +8,11 @@ Adapter riêng cho Claude Code. Shared workflow nằm ở `AGENTS.md` và `docs/
 
 - `dual-agent`: main session = ORCHESTRATOR; `.claude/agents/implementer` = IMPLEMENTER.
 - `single-agent`: main session đóng cả ORCHESTRATOR + IMPLEMENTER; không delegate implementer.
-- Không gọi agent/model/AI CLI ngoài execution profile của task.
+- Không gọi agent/model/AI CLI ngoài execution profile và field `Implementer` của task.
+
+## Chọn IMPLEMENTER
+
+Task `dual-agent`: ORCHESTRATOR chọn IMPLEMENTER theo Danh sách IMPLEMENTER ở `docs/ai/project-profile.md` §7 lúc viết contract và ghi vào field `Implementer`. Gọi adapter tương ứng: subagent `implementer` (Claude Code), hoặc CLI của adapter khác theo README của adapter đó (`adapters/<tool>/README.md` trong kit). Chỉ gọi IMPLEMENTER ghi trong contract.
 
 ## Delegation
 

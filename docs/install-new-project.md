@@ -28,8 +28,10 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
 
    ```bash
    cp -r "$KIT/adapters/claude-code/.claude" .    # Claude Code (CLAUDE.md đã có ở bước 2)
-   cp -r "$KIT/adapters/copilot/.github" .        # Copilot (chưa kiểm chứng, xem adapters/copilot/README.md)
+   cp -r "$KIT/adapters/copilot/.github" .        # Copilot (đã pilot gói Free, xem adapters/copilot/README.md)
    ```
+
+   Codex (chưa kiểm chứng) không cần file riêng vì đọc `AGENTS.md`; chỉ thêm `"codex"` vào `adapters` và đọc `adapters/codex/README.md`.
 
    Chỉ chép adapter bạn dùng, rồi chỉnh `adapters` trong `framework.config.json` cho khớp. Nếu không dùng Claude Code, xóa `CLAUDE.md`.
 

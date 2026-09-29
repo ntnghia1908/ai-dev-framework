@@ -47,6 +47,28 @@ Chỉ tạo `<module>/AGENTS.md` khi module có convention riêng đủ rõ. -->
 
 <!-- FILL: profile được phép (`single-agent`, `dual-agent`). Profile của từng task là source of truth; không suy đoán profile từ tool/model. -->
 
+### Danh sách IMPLEMENTER
+
+Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-agent`; HUMAN LEAD duyệt danh sách. Tên model / vendor chỉ ghi ở đây và ở adapter, không ghi vào Core.
+
+<!-- FILL: bảng dưới, mỗi dòng một adapter được phép. Ví dụ trung tính:
+
+| Adapter | Điểm mạnh | Giới hạn | Dùng khi | Dự phòng |
+|---|---|---|---|---|
+| `claude-code` (subagent `implementer`) | tích hợp sẵn với ORCHESTRATOR, không cần CLI riêng | tốn hạn mức của session chính | task cần ngữ cảnh dài | `copilot` |
+| `copilot` (CLI, `--agent implementer`) | chạy nhanh, chi phí thấp cho việc nhỏ | hạn mức gói; allowlist lệnh phải cấu hình | task nhỏ, ít rủi ro, file rõ ràng | `claude-code` |
+| `codex` (`codex exec`) | vendor khác → review chéo | cần gói / API key; chưa kiểm chứng | task cần cách nhìn độc lập | `claude-code` |
+-->
+
+| Adapter | Điểm mạnh | Giới hạn | Dùng khi | Dự phòng |
+|---|---|---|---|---|
+
+Cách chọn:
+
+- ORCHESTRATOR chọn IMPLEMENTER lúc viết task contract và ghi vào field `Implementer`; `APPROVE TASK` duyệt luôn lựa chọn này.
+- Không đổi IMPLEMENTER giữa task (một writer trên một branch), trừ dự phòng đã khai ở bảng (hạn mức, auth, lỗi tool, circuit breaker); ghi việc đổi vào Result.
+- Nhiều IMPLEMENTER chạy song song chỉ khi tập file không giao nhau, mỗi người một branch (`docs/ai/workflow.md` §5).
+
 ## 8. Setup / tools
 
 <!-- FILL: runtime, cách cài, cách chạy, dependency được duyệt (hoặc pointer tới nơi ghi). -->

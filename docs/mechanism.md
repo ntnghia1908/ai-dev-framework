@@ -38,7 +38,9 @@ Ba vai trò (`workflow §1`): HUMAN LEAD (quyết boundary, approve, commit/push
 - `dual-agent`: hai agent khác nhau làm ORCHESTRATOR và IMPLEMENTER; có review độc lập.
 - `single-agent`: một agent đóng cả hai, nhưng vẫn bắt buộc pha review riêng (`profiles`; `workflow §7`).
 
-Profile chỉ **thêm** ràng buộc, không nới workflow (`profiles`). Adapter quyết định profile được hiện thực thế nào với từng tool: ví dụ adapter Claude Code map ORCHESTRATOR = session chính, IMPLEMENTER = subagent (`adapters/claude-code/`); adapter Copilot chạy IMPLEMENTER cục bộ, chưa kiểm chứng (`adapters/copilot/README.md`). Project khai profile được phép ở `docs/ai/project-profile.md` §7.
+Profile chỉ **thêm** ràng buộc, không nới workflow (`profiles`). Adapter quyết định profile được hiện thực thế nào với từng tool: ví dụ adapter Claude Code map ORCHESTRATOR = session chính, IMPLEMENTER = subagent (`adapters/claude-code/`); adapter Copilot chạy IMPLEMENTER cục bộ, đã pilot với gói Free (`adapters/copilot/README.md`); adapter Codex chưa kiểm chứng (`adapters/codex/README.md`). Project khai profile được phép ở `docs/ai/project-profile.md` §7.
+
+**Nhiều IMPLEMENTER.** Core không nói tool nào làm IMPLEMENTER. Project có thể khai một **Danh sách IMPLEMENTER** (mỗi adapter: điểm mạnh, giới hạn, dùng khi, dự phòng) ở `templates/docs/ai/project-profile.md` §7, do HUMAN LEAD duyệt. ORCHESTRATOR chọn một IMPLEMENTER cho từng task lúc viết contract, ghi vào field `Implementer`, và `APPROVE TASK` duyệt luôn lựa chọn; luật chọn / đổi / song song nằm ở template §7. Lợi ích: khi IMPLEMENTER và ORCHESTRATOR thuộc vendor khác nhau, review diff trở thành review chéo (lỗi hệ thống của một model ít bị bỏ sót bởi model kia), và việc nhỏ có thể đi qua tool rẻ hơn. Tên model / vendor chỉ xuất hiện ở adapter và project profile, không ở Core.
 
 ## 5. S-class, decision gate và luồng công việc
 
