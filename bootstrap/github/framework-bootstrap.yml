@@ -40,8 +40,9 @@ jobs:
 
           mkdir -p .claude .github/workflows
           cp -a "$framework/adapters/claude-code/.claude/." .claude/
-          cp "$framework/adapters/claude-code/workflows/requirement-to-task.yml" .github/workflows/
 
+          # GitHub Actions' built-in GITHUB_TOKEN cannot push workflow files.
+          # The caller adds adapter workflow files after this bulk bootstrap run.
           rm -f .github/workflows/framework-bootstrap.yml
 
           git config user.name "github-actions[bot]"
