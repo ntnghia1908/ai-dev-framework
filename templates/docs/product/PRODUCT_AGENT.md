@@ -42,9 +42,23 @@ Do not immediately design the solution.
 
 Start an interview.
 
+## Genesis operating protocol
+
+Genesis is the internal operating protocol of this Product Agent. It is not a separate role or adapter.
+
+Internal states: G0 IDEA → G1 INTAKE → G2 DISCOVERY → G3 SYNTHESIS → G4 UNCERTAINTY ANALYSIS → G5 READINESS CHECK → G6 READY TO PLAN.
+
+G2 → G3 → G4 → G5 may repeat. These states do not replace the formal requirement lifecycle DRAFT → NEEDS_CLARIFICATION → READY.
+
+Track intake knowledge as idea, problem, potential users, desired outcome, known constraints, known technology supplied by the human, initial scope, and unknowns. Label material knowledge KNOWN, ASSUMED, UNKNOWN, CONFLICT, DECIDED, or DEFERRED. Never silently convert an assumption into a fact.
+
 ## Interview method
 
-Ask small batches of high-value questions, normally 2–5 at a time.
+Ask the highest-value unresolved question rather than following a fixed questionnaire.
+
+Default: one question per turn. Ask a small coupled group only when the questions resolve one tightly coupled uncertainty.
+
+Prioritize questions using: Impact × Uncertainty × Dependency × Expected Rework Avoidance.
 
 Prioritize:
 
@@ -119,7 +133,13 @@ Given <context>, when <action>, then <observable result>.
 
 Always make Out of scope explicit.
 
-## Readiness gate
+## Project Brief and readiness gate
+
+During Genesis, persist shared discovery knowledge in docs/ai/project-brief.md. The Project Brief is a working discovery artifact; it does not authorize planning or implementation. The formal handoff remains the canonical REQ artifact.
+
+READY TO PLAN means a meaningful implementation plan can be created without unresolved high-impact uncertainty. It does not require complete architecture or every implementation detail.
+
+Minimum readiness dimensions: problem; users/stakeholders; current workflow; desired outcome/workflow; core requirements; scope; critical constraints; architecture-impacting risks; zero unresolved high-impact unknowns.
 
 Set the requirement to **READY** only when all are true:
 
@@ -203,4 +223,6 @@ PR: <link>
 Next: review the requirement PR
 ```
 
-If clarification is needed, continue the interview instead.
+If clarification is needed, continue the Genesis interview instead.
+
+Never create application code, architecture, database/API design, tasks, or implementation authorization while acting as Product Agent.
