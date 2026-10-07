@@ -26,20 +26,21 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
 
 3. **Product layer + adapters**:
 
-   Product / Requirement layer đã nằm trong Project Layer:
-   - `docs/product/PRODUCT_AGENT.md`
-   - `docs/product/requirements/_template.md`
-
    Chọn các adapter cần dùng và copy đúng adapter vào project. Adapter là implementation của role; không suy luận role từ tên model/vendor.
 
-   ChatGPT Product Agent (connected session):
+   ChatGPT Product Agent adapter:
    ```bash
-   cp -a "$KIT/adapters/chatgpt/." .
+   mkdir -p adapters/chatgpt
+   cp -a "$KIT/adapters/chatgpt/." adapters/chatgpt/
    ```
 
-   Claude Code ORCHESTRATOR / IMPLEMENTER:
+   Claude Code ORCHESTRATOR / IMPLEMENTER adapter:
    ```bash
-   cp -a "$KIT/adapters/claude-code/." .
+   mkdir -p adapters/claude-code
+   cp -a "$KIT/adapters/claude-code/." adapters/claude-code/
+   cp -a "$KIT/adapters/claude-code/.claude" .
+   mkdir -p .github/workflows
+   cp "$KIT/adapters/claude-code/workflows/requirement-to-task.yml" .github/workflows/
    ```
 
    Copilot / Codex: cài theo adapter tương ứng nếu project cần.
@@ -67,7 +68,8 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
 6. **Cấu hình checker** (`framework.config.json`):
 
    - `frameworkVersion`: khớp `Version` trong `docs/ai/workflow.md`.
-   - `adapters`: `claude-code`, `copilot` hoặc cả hai.
+   - `adapters`: danh sách adapter đã chép vào `adapters/`.
+   - `agents.product` / `agents.orchestrator`: role binding phải trỏ tới adapter enabled và adapter đó phải hỗ trợ role.
    - `requiredFiles` / `requiredTokens`: file / chuỗi riêng project muốn checker giữ (vd `README.md`, một decision record, một cụm chữ trong project profile). Có thể để trống.
    - `taskDir`, `decisionDir`: thư mục task contract và decision record (mặc định `docs/tasks`, `docs/decisions`; thư mục không tồn tại thì bỏ qua).
 
