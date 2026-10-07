@@ -63,7 +63,7 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
    grep -rn "<!-- FILL:" . --include='*.md'
    ```
 
-   Điền lần lượt: `docs/ai/project-profile.md` (project là gì, authority order, module map — phân biệt planned / implemented, integration mechanism, execution profile được phép, setup, lệnh test trong Test policy), `AGENTS.md` (mục Project boundary: điền hoặc xóa), `docs/workflow/current-state.md`, `FRAMEWORK_ADOPTION.md` (kit + tag + commit; Adopted / Adapted / Not adopted), `docs/ai/framework-history.md` (entry adoption dưới `## v4.2`). Xóa dấu `<!-- FILL: ... -->` khi đã điền.
+   Điền lần lượt: `docs/ai/project-profile.md` (project là gì, authority order, module map — phân biệt planned / implemented, integration mechanism, execution profile được phép, setup, lệnh test trong Test policy), `AGENTS.md` (mục Project boundary: điền hoặc xóa), `docs/workflow/current-state.md`, `FRAMEWORK_ADOPTION.md` (kit + tag + commit; Adopted / Adapted / Not adopted), `docs/ai/framework-history.md` (entry adoption dưới `## v4.3`). Xóa dấu `<!-- FILL: ... -->` khi đã điền.
 
 6. **Cấu hình checker** (`framework.config.json`):
 
