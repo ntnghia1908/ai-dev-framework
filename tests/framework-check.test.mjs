@@ -35,9 +35,9 @@ function makeProject({ adapters = ['claude-code'] } = {}) {
   walk(dir);
   const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
   cfg.adapters = adapters;
-  const first = adapters[0] ?? 'codex';
-  cfg.agents = { product: first, orchestrator: first };
-  if (!adapters.includes('chatgpt')) delete cfg.agents.product;
+  cfg.agents = {};
+  if (adapters.includes('chatgpt')) cfg.agents.product = 'chatgpt';
+  if (adapters.includes('claude-code')) cfg.agents.orchestrator = 'claude-code';
   fs.writeFileSync(path.join(dir, 'framework.config.json'), JSON.stringify(cfg, null, 2));
   return dir;
 }
