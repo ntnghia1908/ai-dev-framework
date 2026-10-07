@@ -1,0 +1,51 @@
+name: Framework Bootstrap
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/framework-bootstrap.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap from ai-dev-framework
+        env:
+          FRAMEWORK_REPO: ntnghia1908/ai-dev-framework
+          FRAMEWORK_REF: main
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          git clone --depth 1 --branch "$FRAMEWORK_REF" "https://github.com/$FRAMEWORK_REPO.git" "$tmp/framework"
+          framework="$tmp/framework"
+
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+
+          cp -a "$framework/core/docs" ./docs
+          cp -a "$framework/templates/." .
+          mkdir -p scripts
+          cp "$framework/scripts/framework-check.mjs" scripts/
+          cp "$framework/scripts/product-check.mjs" scripts/
+
+          mkdir -p .claude .github/workflows
+          cp -a "$framework/adapters/claude-code/.claude/." .claude/
+          cp "$framework/adapters/claude-code/workflows/requirement-to-task.yml" .github/workflows/
+
+          rm -f .github/workflows/framework-bootstrap.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: bootstrap ai-dev-framework snapshot"
+          git push
