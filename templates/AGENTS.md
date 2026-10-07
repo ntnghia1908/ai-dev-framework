@@ -5,6 +5,7 @@ Entry point cho mọi agent làm việc trong repository này.
 | Cần biết | Ở đâu |
 |---|---|
 | Quy trình S0/S1/S2, decision gate, lifecycle, review, integration | `docs/ai/workflow.md` |
+| IDEA → REQUIREMENT Product Agent | `docs/product/PRODUCT_AGENT.md` |
 | Vai trò HUMAN LEAD / ORCHESTRATOR / IMPLEMENTER | `docs/ai/execution-profiles.md` |
 | Project này là gì, authority, module, policy, integration | `docs/ai/project-profile.md` |
 | Focus, blocker, open decision, next action | `docs/workflow/current-state.md` |
