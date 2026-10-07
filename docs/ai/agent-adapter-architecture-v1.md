@@ -2,7 +2,7 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSAL |
+| Status | CURRENT |
 | Target framework | v4.3 |
 | Decision | Pending HUMAN LEAD approval |
 | Scope | Agent roles, contracts, provider/tool adapters |
