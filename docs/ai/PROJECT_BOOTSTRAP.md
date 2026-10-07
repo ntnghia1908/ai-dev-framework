@@ -1,228 +1,75 @@
-# Project Bootstrap
+# Project Bootstrap Contract
+
+Version: 1.1
 
 ## Purpose
 
-Define the standard, session-independent protocol for starting a new project from this framework.
+A new project is an independent snapshot of ai-dev-framework.
 
-Each new project is an **independent repository** containing a snapshot/copy of the framework. The new project must not depend on the `ai-dev-framework` repository at runtime.
+It is not a fork and must not have a runtime dependency on ai-dev-framework.
 
-## Canonical source
+## Standard user command
 
-The canonical framework source for Step 1 is:
+For a new empty GitHub repository, the user can say:
 
-- Repository: `ntnghia1908/ai-dev-framework`
-- URL: https://github.com/ntnghia1908/ai-dev-framework
-- Branch: `main`
+> "Đã tạo repo <repo-name>. Làm bước 1."
 
-When a human explicitly provides a different framework source, use that source instead.
+Bước 1 means Project Bootstrap only.
 
-**Important:** A new ChatGPT session must treat this document as the bootstrap protocol. The assistant must read this document from the source framework repository before performing Step 1 whenever the source repository is accessible.
+The assistant must not start Product Agent requirement discovery during bootstrap.
 
-## Standard flow
+## Bootstrap modes
 
-```
-New IDEA
-   ↓
-Human creates an empty GitHub repository
-   ↓
-Human tells assistant:
-"Đã tạo repo <repo-name>. Dựa vào ai-dev-framework, làm bước 1."
-   ↓
-Assistant reads PROJECT_BOOTSTRAP.md
-   ↓
-Bootstrap framework snapshot into target repository
-   ↓
-Verify bootstrap
-   ↓
-Report: BOOTSTRAP COMPLETE
-   ↓
-STOP
-   ↓
-Later: Product Agent interview
-   ↓
-IDEA → REQUIREMENT → TASK → IMPLEMENTATION
-```
+### Mode A — GitHub-connected bootstrap (preferred)
 
-## Meaning of "Step 1"
+When the assistant can write to the target GitHub repository, use the one-file bootstrap stub:
 
-**Step 1 = Project Bootstrap.**
+1. Verify the target repository is empty except for .git / its initial technical state.
+2. Create .github/workflows/framework-bootstrap.yml in the target repository.
+3. The workflow clones the framework source and creates the project snapshot in one GitHub Actions run.
+4. The workflow removes itself after the snapshot is committed.
+5. Verify the resulting tree contains the expected framework files.
+6. Run or verify node scripts/framework-check.mjs.
+7. Report Bước 1 complete.
 
-Step 1 is a repository setup operation. It is **not** a requirements-analysis operation.
+This mode minimizes GitHub API operations: the assistant writes only the bootstrap stub, while GitHub Actions performs the bulk copy.
 
-The preferred human command is:
+The workflow currently uses main as the framework source. For reproducible releases, replace FRAMEWORK_REF with a framework tag or commit when the project adopts a release.
 
-> Đã tạo `<repo-url>`. Dựa vào `ai-dev-framework`, làm bước 1.
+### Mode B — Local bootstrap
 
-Equivalent wording such as:
+When the framework is already cloned locally, run:
 
-> Đã tạo repo `<repo-name>` dựa vào `ai-dev-framework`, làm bước 1.
+    bash scripts/bootstrap-project.sh /path/to/new-project
 
-should be understood as the same command.
+The script copies the same project-layer snapshot locally and does not modify the framework repository.
 
-The assistant should infer:
+## Bootstrap invariants
 
-- the explicitly supplied repository is the **TARGET**;
-- `ai-dev-framework` is the **SOURCE FRAMEWORK**;
-- Step 1 means **bootstrap the source framework into the target**.
+During Bước 1:
 
-## Step 1 procedure
+- Do not create REQ-001 or any product requirement.
+- Do not start the Product Agent interview.
+- Do not design application architecture.
+- Do not change S0/S1/S2 governance.
+- Do not introduce a runtime dependency on ai-dev-framework.
+- Do not convert the new repository into a fork.
+- Preserve the framework snapshot as project-owned files.
 
-### 1. Identify TARGET
+After bootstrap is verified, wait for the user's IDEA.
 
-Use the repository URL or repository name explicitly supplied by the human.
+## Expected transition
 
-Verify that:
-
-- the repository exists;
-- the assistant has access;
-- the repository is suitable for bootstrap.
-
-If the repository does not exist or cannot be accessed, stop and report the blocker.
-
-### 2. Identify SOURCE
-
-Unless the human explicitly supplies another framework source, use:
-
-`ntnghia1908/ai-dev-framework`, branch `main`.
-
-Read `docs/ai/PROJECT_BOOTSTRAP.md` from the source before executing the bootstrap.
-
-### 3. Bootstrap mode
-
-Use an **independent snapshot copy**.
-
-The target repository is:
-
-- **not a fork**;
-- **not a submodule**;
-- **not a runtime dependency** on the framework repository;
-- **not a shared live workspace**.
-
-Copy the framework's project-ready structure and instructions into the target repository.
-
-The target should contain the framework's usable project-layer files at the appropriate project paths, including the required:
-
-- `AGENTS.md`
-- `CLAUDE.md`
-- `docs/ai/`
-- `docs/product/`
-- `docs/tasks/`
-- `docs/workflow/`
-- `scripts/`
-- required tool adapters
-- framework configuration
-- applicable tests/checkers
-
-Do not blindly preserve a framework-only `templates/` wrapper when the source file is intended to become a project-root file. Follow the source framework's installation/bootstrap conventions.
-
-### 4. Preserve governance
-
-Do not redesign or reinterpret the framework during Step 1.
-
-Preserve:
-
-- S0/S1/S2 governance;
-- decision gates;
-- task contract;
-- Product Agent workflow;
-- requirement validation;
-- Claude requirement-to-task handoff;
-- implementation authorization rules;
-- execution profiles;
-- circuit-breaker rules.
-
-Do not introduce domain-specific architecture during bootstrap.
-
-### 5. Project-specific initialization
-
-Only initialize repository metadata that is explicitly part of the framework bootstrap contract.
-
-Do **not**:
-
-- analyze the project IDEA;
-- interview the human about requirements;
-- create `REQ-001`;
-- create task contracts;
-- design architecture;
-- select databases, APIs, libraries, deployment technologies, or authentication systems;
-- implement application code.
-
-If the human included an IDEA in the same message, preserve it as context but do not turn it into requirements during Step 1.
-
-### 6. Verify
-
-After copying the framework:
-
-1. Verify the expected project-layer structure exists.
-2. Verify the core Product Agent instructions are present.
-3. Verify the Claude requirement-to-task adapter is present when included by the source snapshot.
-4. Run the applicable deterministic framework/product checker when the target has enough files to run it.
-5. Check that no unintended application/domain files were created.
-
-If verification fails, report the failure; do not claim bootstrap completion.
-
-### 7. Completion boundary
-
-When Step 1 succeeds, report:
-
-> **BOOTSTRAP COMPLETE**
-
-Include:
-
-- target repository;
-- source framework and source branch;
-- framework snapshot/version if available;
-- verification result.
-
-Then **STOP**.
-
-Do not automatically start the Product Agent interview in the same turn unless the human explicitly asks to continue.
-
-The next human message can be as simple as:
-
-> Bắt đầu Product Agent.
-
-or provide the project IDEA.
-
-## Repository model
-
-```
-ai-dev-framework/main
-      │
-      │ independent snapshot
-      ▼
-faculty-app-platform
-      │
-      ├── own requirements
-      ├── own tasks
-      ├── own implementation
-      └── own project history
-```
-
-Changes made later to `ai-dev-framework` do not automatically change an existing project. A future framework upgrade is a separate, explicit operation.
-
-## Human interaction contract
-
-### Minimal command
-
-The recommended command is:
-
-> Đã tạo `https://github.com/<owner>/<repo>`. Dựa vào `ai-dev-framework`, làm bước 1.
-
-### If the target is not ready
-
-If the target repository has not been created, ask the human to create it first.
-
-If the target contains existing project content, do not overwrite it blindly. Inspect the repository and ask before performing a destructive bootstrap.
-
-## Scope
-
-This document defines only project bootstrap behavior. It does not replace or modify:
-
-- S0/S1/S2 governance;
-- Product Agent requirements;
-- requirement validation;
-- Claude requirement-to-task handoff;
-- task approval or implementation workflow.
-
-Those remain governed by their respective framework documents.
+    empty GitHub repo
+          |
+    BƯỚC 1 — Project Bootstrap
+          |
+    framework snapshot verified
+          |
+         WAIT
+          |
+         IDEA
+          |
+    Product Agent interview
+          |
+        REQ-001
