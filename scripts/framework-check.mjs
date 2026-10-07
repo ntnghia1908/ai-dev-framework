@@ -22,26 +22,28 @@ const errors = [];
 const fail = (message) => errors.push(message);
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
+const readJson = (rel) => JSON.parse(read(rel));
 
 function finish() {
   for (const e of errors) console.log(`FAIL: ${e}`);
   process.exit(1);
 }
 
-// ---- Config -------------------------------------------------------------
 const CONFIG = 'framework.config.json';
-const KNOWN_ADAPTERS = ['claude-code', 'copilot', 'codex'];
-
 if (!exists(CONFIG)) { fail(`missing ${CONFIG}`); finish(); }
+
 let config;
-try { config = JSON.parse(read(CONFIG)); } catch (e) { fail(`${CONFIG}: invalid JSON (${e.message})`); finish(); }
+try { config = readJson(CONFIG); } catch (e) { fail(`${CONFIG}: invalid JSON (${e.message})`); finish(); }
 
 const isStringArray = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string' && x.length > 0);
+const ROLE_NAMES = ['product', 'orchestrator'];
+const ALL_ROLE_NAMES = ['product', 'orchestrator', 'implementer'];
+const EXECUTION_MODES = ['interactive', 'local', 'ci'];
+
 if (config === null || typeof config !== 'object' || Array.isArray(config)) fail(`${CONFIG}: must be a JSON object`);
 else {
   if (typeof config.frameworkVersion !== 'string' || !config.frameworkVersion) fail(`${CONFIG}: frameworkVersion must be a non-empty string`);
   if (!isStringArray(config.adapters)) fail(`${CONFIG}: adapters must be an array of strings`);
-  else for (const a of config.adapters) if (!KNOWN_ADAPTERS.includes(a)) fail(`${CONFIG}: unknown adapter: ${a} (known: ${KNOWN_ADAPTERS.join(', ')})`);
   if ('requiredFiles' in config && !isStringArray(config.requiredFiles)) fail(`${CONFIG}: requiredFiles must be an array of strings`);
   if ('requiredTokens' in config) {
     const t = config.requiredTokens;
@@ -52,6 +54,21 @@ else {
   for (const key of ['taskDir', 'decisionDir']) {
     if (key in config && (typeof config[key] !== 'string' || !config[key])) fail(`${CONFIG}: ${key} must be a non-empty string`);
   }
+  if ('agents' in config) {
+    const agents = config.agents;
+    if (agents === null || typeof agents !== 'object' || Array.isArray(agents)) {
+      fail(`${CONFIG}: agents must be an object`);
+    } else {
+      for (const role of ROLE_NAMES) {
+        if (role in agents && (typeof agents[role] !== 'string' || !agents[role])) {
+          fail(`${CONFIG}: agents.${role} must be a non-empty string`);
+        }
+      }
+      for (const key of Object.keys(agents)) {
+        if (!ROLE_NAMES.includes(key)) fail(`${CONFIG}: unknown agent binding: ${key}`);
+      }
+    }
+  }
 }
 if (errors.length) finish();
 
@@ -60,6 +77,56 @@ const extraFiles = config.requiredFiles ?? [];
 const requiredTokens = config.requiredTokens ?? {};
 const taskDir = (config.taskDir ?? 'docs/tasks').replace(/\/+$/, '');
 const decisionDir = (config.decisionDir ?? 'docs/decisions').replace(/\/+$/, '');
+
+if (new Set(adapters).size !== adapters.length) fail(`${CONFIG}: adapters must not contain duplicates`);
+
+const availableAdapterIds = exists('adapters')
+  ? fs.readdirSync(path.join(ROOT, 'adapters'), { withFileTypes: true })
+      .filter((e) => e.isDirectory() && exists(`adapters/${e.name}/adapter.json`))
+      .map((e) => e.name)
+  : [];
+
+const descriptors = new Map();
+for (const id of adapters) {
+  if (!availableAdapterIds.includes(id)) {
+    fail(`${CONFIG}: unknown adapter: ${id} (missing adapters/${id}/adapter.json)`);
+    continue;
+  }
+  const rel = `adapters/${id}/adapter.json`;
+  let d;
+  try { d = readJson(rel); } catch (e) { fail(`${rel}: invalid JSON (${e.message})`); continue; }
+  descriptors.set(id, d);
+  if (d.schemaVersion !== '1') fail(`${rel}: schemaVersion must be 1`);
+  if (d.id !== id) fail(`${rel}: id must match adapter directory ${id}`);
+  if (typeof d.displayName !== 'string' || !d.displayName) fail(`${rel}: displayName must be a non-empty string`);
+  if (!isStringArray(d.roles)) fail(`${rel}: roles must be an array of strings`);
+  else {
+    if (new Set(d.roles).size !== d.roles.length) fail(`${rel}: roles must not contain duplicates`);
+    for (const role of d.roles) if (!ALL_ROLE_NAMES.includes(role)) fail(`${rel}: unknown role: ${role}`);
+  }
+  if (!isStringArray(d.execution)) fail(`${rel}: execution must be an array of strings`);
+  else for (const mode of d.execution) if (!EXECUTION_MODES.includes(mode)) fail(`${rel}: invalid execution mode: ${mode}`);
+  const caps = d.capabilities;
+  const capNames = ['readRepository', 'writeRepository', 'shell', 'git', 'pullRequest'];
+  if (caps === null || typeof caps !== 'object' || Array.isArray(caps)) fail(`${rel}: capabilities must be an object`);
+  else {
+    for (const name of capNames) if (typeof caps[name] !== 'boolean') fail(`${rel}: capabilities.${name} must be boolean`);
+  }
+}
+
+const boundAgents = config.agents ?? {};
+for (const role of ROLE_NAMES) {
+  if (!(role in boundAgents)) continue;
+  const adapterId = boundAgents[role];
+  if (!adapters.includes(adapterId)) {
+    fail(`${CONFIG}: agents.${role} references disabled adapter: ${adapterId}`);
+    continue;
+  }
+  const descriptor = descriptors.get(adapterId);
+  if (descriptor && !descriptor.roles.includes(role)) {
+    fail(`${CONFIG}: agents.${role} adapter ${adapterId} does not support role ${role}`);
+  }
+}
 
 // ---- Required files -----------------------------------------------------
 const coreFiles = [
@@ -71,16 +138,19 @@ const coreFiles = [
   'docs/workflow/current-state.md',
   'docs/tasks/_template.md',
   'FRAMEWORK_ADOPTION.md',
+  'docs/ai/agent-adapter-contract.md',
+  'docs/ai/adapter-descriptor.schema.json',
 ];
 const adapterFiles = {
   'claude-code': ['CLAUDE.md', '.claude/rules/execution.md', '.claude/agents/implementer.md'],
   copilot: ['.github/copilot-instructions.md', '.github/agents/implementer.agent.md'],
-  codex: [], // Codex CLI đọc AGENTS.md (luôn bắt buộc); không cần file riêng
+  codex: [],
+  chatgpt: [],
 };
 const required = [...new Set([
   CONFIG,
   ...coreFiles,
-  ...adapters.flatMap((a) => adapterFiles[a]),
+  ...adapters.flatMap((a) => adapterFiles[a] ?? []),
   ...extraFiles,
 ])];
 for (const rel of required) if (!exists(rel)) fail(`missing required file: ${rel}`);
@@ -92,7 +162,7 @@ function metadata(rel, key) {
 }
 const status = (rel) => metadata(rel, 'Status');
 
-for (const rel of ['docs/ai/workflow.md', 'docs/ai/execution-profiles.md', 'docs/ai/project-profile.md', 'docs/ai/framework-history.md']) {
+for (const rel of ['docs/ai/workflow.md', 'docs/ai/execution-profiles.md', 'docs/ai/project-profile.md', 'docs/ai/framework-history.md', 'docs/ai/agent-adapter-contract.md']) {
   if (exists(rel) && status(rel) !== 'CURRENT') fail(`${path.basename(rel)} must be CURRENT`);
 }
 if (exists('docs/workflow/current-state.md') && status('docs/workflow/current-state.md') !== 'OPERATIONAL STATE — NOT AUTHORITY') {
@@ -140,10 +210,10 @@ for (const [rel, tokens] of Object.entries(requiredTokens)) {
 // ---- Unfilled template markers -----------------------------------------
 for (const rel of required) {
   if (!exists(rel) || fs.statSync(path.join(ROOT, rel)).isDirectory()) continue;
-  if (/<!--\s*FILL:/.test(read(rel))) fail(`${rel}: unfilled template marker: <!-- FILL: ... -->`);
+  if (/<!--[\s]*FILL:/.test(read(rel))) fail(`${rel}: unfilled template marker: <!-- FILL: ... -->`);
 }
 
-// ---- Task contracts (docs/ai/workflow.md §4) ---------------------------
+// ---- Task contracts -----------------------------------------------------
 const taskFields = {
   'Status': ['DRAFT', 'APPROVED', 'IN_PROGRESS', 'READY'],
   'Type': null,
@@ -166,6 +236,15 @@ for (const file of tasks) {
     if (!value) fail(`${rel}: missing field: ${field}`);
     else if (allowed && !allowed.includes(value)) fail(`${rel}: invalid ${field}: ${value}`);
   }
+  const profileLine = lines.find((x) => x.startsWith('- Execution profile:'));
+  const profile = profileLine?.slice('- Execution profile:'.length).trim();
+  if (profile === 'dual-agent') {
+    const implLine = lines.find((x) => x.startsWith('- Implementer:'));
+    const impl = implLine?.slice('- Implementer:'.length).trim().split(/\s+/)[0];
+    if (!impl) fail(`${rel}: dual-agent task missing field: Implementer`);
+    else if (!adapters.includes(impl)) fail(`${rel}: Implementer ${impl} is not an enabled adapter`);
+    else if (!descriptors.get(impl)?.roles.includes('implementer')) fail(`${rel}: Implementer ${impl} does not support role implementer`);
+  }
   for (const section of taskSections) if (!lines.includes(`## ${section}`)) fail(`${rel}: missing section: ${section}`);
 }
 
@@ -184,4 +263,5 @@ if (errors.length) finish();
 for (const rel of required) console.log(`PASS: ${rel}`);
 for (const file of tasks) console.log(`PASS: task contract ${taskDir}/${file}`);
 for (const file of decisions) console.log(`PASS: decision record ${decisionDir}/${file}`);
+for (const id of adapters) console.log(`PASS: adapter descriptor adapters/${id}/adapter.json`);
 console.log('PASS: framework structure');
