@@ -128,7 +128,7 @@ The deterministic checker should validate the document structure and the READY c
 
 ## 7. GPT output strategy
 
-For ChatGPT use, the Product Agent instructions live in `docs/product/PRODUCT_AGENT.md`. ChatGPT reads the connected repository, interviews HUMAN LEAD, then creates the canonical requirement file directly in GitHub.
+For ChatGPT use, the Product Agent instructions live in `docs/product/PRODUCT_AGENT.md`. In a ChatGPT session with repository write access, ChatGPT reads the connected repository, interviews HUMAN LEAD, then creates the canonical requirement file, branch, commit and GitHub PR directly.
 
 No local CLI, OpenAI API key, or local Git wrapper is required.
 
