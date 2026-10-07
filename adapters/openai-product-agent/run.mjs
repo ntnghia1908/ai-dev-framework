@@ -27,6 +27,17 @@ function git(args) {
   return execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim();
 }
 
+function detectBaseBranch() {
+  try {
+    return git(["symbolic-ref", "--quiet", "--short", "refs/remotes/origin/HEAD"]).replace(/^origin\//, "");
+  } catch {
+    for (const candidate of ["main", "master"]) {
+      try { git(["show-ref", "--verify", "--quiet", "refs/remotes/origin/" + candidate]); return candidate; } catch {}
+    }
+    return "main";
+  }
+}
+
 function commandExists(name) {
   try {
     execFileSync(process.platform === "win32" ? "where" : "which", [name], { stdio: "ignore" });
@@ -55,7 +66,7 @@ if (git(["status", "--porcelain"]).trim()) {
 if (!idea) idea = await ask("IDEA: ");
 if (!idea.trim()) fail("Idea cannot be empty.");
 
-const baseBranch = git(["branch", "--show-current"]);
+const baseBranch = process.env.PRODUCT_BASE_BRANCH || detectBaseBranch();
 const systemPrompt = fs.readFileSync(SYSTEM_FILE, "utf8");
 
 const schema = {
@@ -216,6 +227,12 @@ for (let turn = 1; turn <= maxTurns; turn += 1) {
 if (!state || state.data.status !== "READY") {
   fail("Requirement did not reach READY within " + maxTurns + " turns.");
 }
+
+if (state.data.open_questions.length > 0) fail("Model marked READY with open questions. Resolve them before handoff.");
+if (!state.data.title.trim() || !state.data.problem.trim() || !state.data.goal.trim()) fail("READY requirement is missing title, problem, or goal.");
+if (state.data.actors.length === 0) fail("READY requirement needs at least one actor.");
+if (state.data.functional_requirements.length === 0) fail("READY requirement needs at least one functional requirement.");
+if (state.data.acceptance_criteria.length === 0) fail("READY requirement needs at least one acceptance criterion.");
 
 const reqNumber = nextRequirementNumber();
 const reqId = "REQ-" + String(reqNumber).padStart(3, "0");
