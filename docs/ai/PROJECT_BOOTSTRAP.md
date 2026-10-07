@@ -27,12 +27,13 @@ When the assistant can write to the target GitHub repository, use the one-file b
 1. Verify the target repository is empty except for .git / its initial technical state.
 2. Create .github/workflows/framework-bootstrap.yml in the target repository.
 3. The workflow clones the framework source and creates the project snapshot in one GitHub Actions run.
-4. The workflow removes itself after the snapshot is committed.
-5. Verify the resulting tree contains the expected framework files.
-6. Run or verify node scripts/framework-check.mjs.
-7. Report Bước 1 complete.
+4. The workflow copies the bulk framework snapshot and removes itself before committing.
+5. After the Actions commit succeeds, add the framework adapter workflow files with a direct repository write (workflow files cannot be pushed by GITHUB_TOKEN).
+6. Verify the resulting tree contains the expected framework files.
+7. Run or verify node scripts/framework-check.mjs.
+8. Report Bước 1 complete.
 
-This mode minimizes GitHub API operations: the assistant writes only the bootstrap stub, while GitHub Actions performs the bulk copy.
+This mode minimizes GitHub API operations: the assistant writes one bootstrap stub, GitHub Actions performs the bulk copy, and the assistant makes one final workflow-file write.
 
 The workflow currently uses main as the framework source. For reproducible releases, replace FRAMEWORK_REF with a framework tag or commit when the project adopts a release.
 
