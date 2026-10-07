@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | DRAFT |
+| Status | APPROVED |
 | Type | Framework architecture |
 | Change class | S2 |
 | Owner | ORCHESTRATOR |
@@ -11,7 +11,7 @@
 | Human Lead | HUMAN LEAD |
 | Base commit | 2ac6e20d82fe60e0984f0234f4747bfb1edd933f |
 | Base branch | proposal/agent-adapter-architecture-v1 |
-| Implementation authorized | NO |
+| Implementation authorized | YES |
 | Decision | ADR-001 — ACCEPTED |
 
 ## Objective
@@ -50,7 +50,7 @@ Implement the approved Agent Adapter Architecture v1 as Framework v4.3 while pre
 - ADR-001 is the governing architectural decision.
 - No unrelated refactor.
 - No provider replacement or global default switch unless separately approved.
-- No implementation is authorized yet.
+- Implementation is authorized by HUMAN LEAD.
 
 ## Verification
 
@@ -64,8 +64,8 @@ At minimum:
 
 ## Implementation gate
 
-This task is **DRAFT**. HUMAN LEAD must approve this task and set:
+HUMAN LEAD approved TASK-001 and authorized implementation:
 
 `Implementation authorized: YES`
 
-before IMPLEMENTER begins implementation.
+The IMPLEMENTER may now begin implementation within the approved scope.
