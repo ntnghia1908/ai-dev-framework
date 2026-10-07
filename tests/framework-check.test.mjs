@@ -143,13 +143,13 @@ test('current-state wrong Status fails', () => {
 
 test('Version not in history fails', () => {
   const dir = makeProject();
-  edit(dir, 'docs/ai/framework-history.md', (s) => s.replace('## v4.2', '## v4.1'));
+  edit(dir, 'docs/ai/framework-history.md', (s) => s.replace('## v4.3', '## v4.2'));
   expectFail(dir, /framework-history\.md missing entry for workflow Version 4\.2/);
 });
 
 test('Version differs from config fails', () => {
   const dir = makeProject();
-  edit(dir, 'framework.config.json', (s) => s.replace('"4.2"', '"4.3"'));
+  edit(dir, 'framework.config.json', (s) => s.replace('"4.3"', '"4.2"'));
   expectFail(dir, /does not match framework\.config\.json/);
 });
 
