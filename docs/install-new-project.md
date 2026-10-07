@@ -24,26 +24,24 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
    cp -rn "$KIT/templates/." .
    ```
 
-3. **Adapter** cho tool đang dùng:
+3. **Product layer + adapters**:
 
-   Product / Requirement layer (khuyến nghị nếu muốn IDEA → REQUIREMENT):
+   Product / Requirement layer đã nằm trong Project Layer:
+   - `docs/product/PRODUCT_AGENT.md`
+   - `docs/product/requirements/_template.md`
 
+   Khi dùng ChatGPT kết nối repository, chỉ cần nói `Tôi có một IDEA...`. ChatGPT sẽ interview, tạo REQ, commit và tạo GitHub PR.
+
+   Claude Code:
    ```bash
-   cp -r "$KIT/adapters/openai-product-agent/." .
-   cp "$KIT/product" .
-   cp "$KIT/product.cmd" .
+   cp -r "$KIT/adapters/claude-code/.claude" .
+   mkdir -p .github/workflows
+   cp "$KIT/adapters/claude-code/workflows/requirement-to-task.yml" .github/workflows/
    ```
 
-   Sau đó dùng `./product "..."` (Linux / Git Bash) hoặc `.\\product.cmd "..."` (Windows PowerShell / CMD).
+   Copilot / Codex: cài theo adapter tương ứng nếu project cần.
 
-   ```bash
-   cp -r "$KIT/adapters/claude-code/.claude" .    # Claude Code (CLAUDE.md đã có ở bước 2)
-   cp -r "$KIT/adapters/copilot/.github" .        # Copilot (đã pilot gói Free, xem adapters/copilot/README.md)
-   ```
-
-   Codex (chưa kiểm chứng) không cần file riêng vì đọc `AGENTS.md`; chỉ thêm `"codex"` vào `adapters` và đọc `adapters/codex/README.md`.
-
-   Chỉ chép adapter bạn dùng, rồi chỉnh `adapters` trong `framework.config.json` cho khớp. Nếu không dùng Claude Code, xóa `CLAUDE.md`.
+   Chỉ chép adapter bạn dùng, rồi chỉnh `adapters` trong `framework.config.json` cho khớp.
 
 4. **Checker**:
 
