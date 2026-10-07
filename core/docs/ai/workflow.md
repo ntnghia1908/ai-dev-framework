@@ -3,8 +3,8 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Version | 4.2 |
-| Accepted by | CP0 framework adoption; v4.1: HUMAN LEAD 2026-09-26 (FW-v4.1); v4.2: HUMAN LEAD 2026-09-29 (FW-implementer-speed); FW-starter-kit: HUMAN LEAD 2026-09-29 |
+| Version | 4.3 |
+| Accepted by | CP0 framework adoption; v4.1: HUMAN LEAD 2026-09-26 (FW-v4.1); v4.2: HUMAN LEAD 2026-09-29 (FW-implementer-speed); FW-starter-kit: HUMAN LEAD 2026-09-29; v4.3: HUMAN LEAD 2026-10-07 (ADR-001 / TASK-001) |
 
 > HUMAN LEAD quyết boundary. Agent tự thực thi bên trong boundary đã duyệt.
 
