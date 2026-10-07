@@ -2,7 +2,7 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSED |
+| Status | ACCEPTED |
 | Date | 2026-10-07 |
 | Decision owner | HUMAN LEAD |
 | Scope | Framework architecture |
@@ -48,11 +48,11 @@ Introduce one internal API/gateway that hides all model providers.
 
 **Cons:** Adds infrastructure and operational dependency; unnecessary for the current repository-driven workflow; does not solve tool-specific capabilities by itself.
 
-## Recommendation
+## Decision
 
-**Recommend Option B — Model/Provider Adapter Architecture.**
+**HUMAN LEAD APPROVED Option B — Model/Provider Adapter Architecture.**
 
-The framework should separate:
+The framework will separate:
 
 ~~~text
 ROLE / CONTRACT
@@ -66,9 +66,8 @@ PROVIDER / TOOL / MODEL
 
 The existing S0/S1/S2 workflow, decision gates, task approval, verification and integration ownership remain unchanged.
 
-## Proposed decision
+## Approved direction
 
-If approved:
 1. Agent roles become provider-neutral contracts.
 2. Provider/tool details remain inside adapters.
 3. Adapters expose a machine-readable descriptor.
@@ -83,6 +82,7 @@ If approved:
 ## Consequences
 
 ### Positive
+
 - Reduced vendor lock-in.
 - Easier experimentation with Gemini and future agents.
 - Clear separation between role behavior and tool implementation.
@@ -90,11 +90,13 @@ If approved:
 - Existing governance remains intact.
 
 ### Negative
+
 - v4.3 migration touches checker, templates, documentation and adapters.
 - Adapter descriptors add configuration surface.
 - Each new adapter still requires capability/permission testing.
 
 ### Neutral
+
 The framework does not claim one model/vendor is universally better. Selection remains a project/task decision based on capability, cost, availability and policy.
 
 ## Security / governance
@@ -116,8 +118,6 @@ Adapter capabilities do not override framework authority.
 
 ## Implementation gate
 
-This ADR is **PROPOSED**.
+This ADR is **ACCEPTED** by HUMAN LEAD.
 
-No implementation of the architecture should begin until HUMAN LEAD changes this ADR to ACCEPTED.
-
-After acceptance, implementation is an S2 framework change and should proceed through a task contract with explicit acceptance criteria and verification.
+Implementation remains gated separately by an S2 task contract. Acceptance of this ADR authorizes creation and planning of the v4.3 implementation task; it does **not** authorize implementation code changes.
