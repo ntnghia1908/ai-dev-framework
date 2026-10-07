@@ -4,7 +4,7 @@
 |---|---|
 | Status | CURRENT |
 | Target framework | v4.3 |
-| Decision | Pending HUMAN LEAD approval |
+| Decision | ACCEPTED by HUMAN LEAD; implemented under TASK-001 |
 | Scope | Agent roles, contracts, provider/tool adapters |
 
 ## 1. Purpose
