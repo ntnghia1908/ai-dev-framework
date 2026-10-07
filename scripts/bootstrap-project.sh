@@ -63,9 +63,9 @@ copy_dir "$KIT_ROOT/adapters/chatgpt" "$TARGET/adapters/chatgpt"
 
 # Claude Code ORCHESTRATOR / IMPLEMENTER adapter.
 mkdir -p "$TARGET/.claude" "$TARGET/.github/workflows"
+copy_dir "$KIT_ROOT/adapters/claude-code" "$TARGET/adapters/claude-code"
 copy_dir "$KIT_ROOT/adapters/claude-code/.claude" "$TARGET/.claude"
 cp "$KIT_ROOT/adapters/claude-code/workflows/requirement-to-task.yml" "$TARGET/.github/workflows/"
-cp "$KIT_ROOT/adapters/claude-code/adapter.json" "$TARGET/adapters/claude-code/adapter.json"
 
 echo
 echo "Bootstrap complete."
