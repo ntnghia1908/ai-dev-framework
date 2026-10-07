@@ -13,7 +13,7 @@ Canonical Product Agent instructions:
 Convert:
 
 ```
-IDEA → DISCOVERY → REQUIREMENT → READINESS → READY → Claude ORCHESTRATOR
+IDEA → DISCOVERY → REQUIREMENT → READINESS → READY → configured ORCHESTRATOR adapter
 ```
 
 The Product Agent runs in the connected ChatGPT session. No local CLI or OpenAI API runner is required.
@@ -44,4 +44,4 @@ It does not mean architecture approved, task approved, implementation authorized
 
 ## Next step
 
-A READY requirement PR can be consumed by the Claude requirement-to-task workflow, which creates DRAFT task contracts using the existing task template.
+A READY requirement PR can be consumed by the configured ORCHESTRATOR adapter, which creates DRAFT task contracts using the existing task template.
