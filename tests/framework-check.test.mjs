@@ -22,7 +22,12 @@ function makeProject({ adapters = ['claude-code'] } = {}) {
   created.push(dir);
   copyDir(path.join(KIT, 'core'), dir);
   copyDir(path.join(KIT, 'templates'), dir);
-  for (const a of adapters) copyDir(path.join(KIT, 'adapters', a), dir);
+  for (const a of adapters) {
+    const src = path.join(KIT, 'adapters', a);
+    copyDir(src, path.join(dir, 'adapters', a));
+    if (a === 'claude-code') copyDir(path.join(src, '.claude'), path.join(dir, '.claude'));
+    if (a === 'copilot') copyDir(path.join(src, '.github'), path.join(dir, '.github'));
+  }
   const walk = (d) => {
     for (const e of fs.readdirSync(d, { withFileTypes: true })) {
       const p = path.join(d, e.name);
