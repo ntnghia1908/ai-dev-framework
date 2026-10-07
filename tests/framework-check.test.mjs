@@ -122,8 +122,7 @@ test('codex adapter enabled passes without extra files', () => {
 });
 
 test('codex adapter alone passes', () => {
-  const dir = makeProject({ adapters: [] });
-  edit(dir, 'framework.config.json', (s) => s.replace('"adapters": []', '"adapters": ["codex"]'));
+  const dir = makeProject({ adapters: ['codex'] });
   const { code, out } = run(dir);
   assert.equal(code, 0, out);
 });
@@ -237,13 +236,13 @@ test('unknown adapter fails', () => {
 
 test('role binding to disabled adapter fails', () => {
   const dir = makeProject();
-  edit(dir, 'framework.config.json', (s) => s.replace('"product": "claude-code"', '"product": "chatgpt"'));
+  edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "chatgpt"'));
   expectFail(dir, /agents\.product references disabled adapter: chatgpt/);
 });
 
 test('role binding to unsupported adapter role fails', () => {
   const dir = makeProject({ adapters: ['claude-code', 'codex'] });
-  edit(dir, 'framework.config.json', (s) => s.replace('"product": "claude-code"', '"product": "codex"'));
+  edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "codex"'));
   expectFail(dir, /agents\.product adapter codex does not support role product/);
 });
 
