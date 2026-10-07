@@ -19,7 +19,7 @@ templates/             Project Layer, có chỗ trống <!-- FILL: ... -->
   docs/product/                    IDEA → REQUIREMENT layer
 adapters/              Tool Adapter, chọn theo tool đang dùng
   openai-product-agent/ Product / Requirement Agent
-  claude-code/         rules + subagent implementer
+  claude-code/         rules + subagent implementer + REQ handoff
   copilot/             pointer + custom agent implementer (đã pilot gói Free 2026-09-29)
   codex/               README: Codex CLI làm IMPLEMENTER (CHƯA KIỂM CHỨNG)
 scripts/framework-check.mjs        checker cấu trúc, Node stdlib, đọc framework.config.json
@@ -40,6 +40,7 @@ cp -rn $KIT/templates/. .       # Project Layer (không ghi đè file có sẵn)
 cp -r $KIT/adapters/openai-product-agent/. .   # Product Agent
 cp $KIT/product . && cp $KIT/product.cmd .
 cp -r $KIT/adapters/claude-code/. .   # Claude Code adapter
+mkdir -p .github/workflows && cp $KIT/adapters/claude-code/workflows/requirement-to-task.yml .github/workflows/
 mkdir -p scripts && cp $KIT/scripts/framework-check.mjs scripts/
 # điền mọi <!-- FILL: ... --> rồi
 node scripts/framework-check.mjs
