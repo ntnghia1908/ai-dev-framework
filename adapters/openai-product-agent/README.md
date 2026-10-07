@@ -1,28 +1,80 @@
 # OpenAI Product / Requirement Agent
 
-Turns IDEA into docs/product/requirements/REQ-<number>-<slug>.md.
+Turns an IDEA into docs/product/requirements/REQ-<number>-<slug>.md and can hand it off to Claude through a GitHub PR.
 
-Responsibilities:
-1. Interview the human.
-2. Synthesize requirements.
-3. Run the readiness gate.
-4. Return NEEDS_CLARIFICATION or READY.
+## One-command usage
 
-Non-responsibilities:
-1. No code.
-2. No architecture decision.
-3. No dependency selection.
-4. No silent scope expansion.
+Linux / macOS / Git Bash:
 
-ChatGPT mode:
-Use SYSTEM.md as operating instructions, give the raw idea, answer the small question batches, then save the READY artifact with the canonical template.
+    ./product "I want an app to manage thesis"
 
-API mode:
-Use the same system instructions with a structured response contract, render Markdown, run scripts/product-check.mjs, then commit the requirement. Keep the OpenAI model configurable through OPENAI_MODEL.
+Windows PowerShell / CMD:
 
-Recommended structured fields:
-id, status, title, problem, goal, actors, current_workflow, desired_workflow, functional_requirements, non_functional_requirements, business_rules, edge_cases, acceptance_criteria, out_of_scope, assumptions, open_questions.
+    .\product.cmd "I want an app to manage thesis"
 
-The Markdown requirement is the repository source of truth.
+The runner will:
 
-See docs/product-requirement-agent-v1.md for the end-to-end design.
+1. Interview you in small question batches.
+2. Keep conversation state with Responses API.
+3. Return a structured requirement.
+4. Run scripts/product-check.mjs.
+5. Create product/REQ-xxx-<slug>.
+6. Commit and push the branch.
+7. Create a GitHub PR.
+8. Let the repository's Claude workflow consume the READY requirement and create DRAFT task contracts.
+
+## Environment
+
+Required:
+
+    OPENAI_API_KEY
+
+Optional:
+
+    OPENAI_MODEL=gpt-6-astra
+    PRODUCT_MAX_TURNS=12
+    PRODUCT_OWNER="HUMAN LEAD"
+
+For automatic PR creation, either:
+
+    GITHUB_TOKEN=<token>
+
+or:
+
+    GH_TOKEN=<token>
+
+Alternatively authenticate GitHub CLI with gh and let the runner call gh pr create.
+
+On Windows PowerShell:
+
+    $env:OPENAI_API_KEY = "sk-..."
+    $env:GITHUB_TOKEN = "github_pat_..."
+
+Do not commit API keys or tokens into the repository.
+
+## Safety / gates
+
+The runner requires a clean git working tree. This prevents the Product Agent from mixing its requirement with unrelated work.
+
+READY means ready for development planning. It does not mean implementation authorized.
+
+The Claude requirement-to-task workflow creates DRAFT task contracts only. Existing HUMAN LEAD approval and Implementation authorized: YES rules remain unchanged.
+
+## Options
+
+    ./product "..." --dry-run
+
+Creates the branch and local commit but skips push and PR.
+
+    ./product "..." --no-pr
+
+Pushes the branch but skips PR creation.
+
+## API design
+
+The runner uses the OpenAI Responses API with Structured Outputs via text.format/json_schema. Multi-turn discovery uses previous_response_id and resends the stable system instructions on every turn, as required by the Responses conversation model.
+
+Official references:
+- https://developers.openai.com/api/docs/guides/structured-outputs
+- https://developers.openai.com/api/docs/guides/conversation-state
+- https://developers.openai.com/api/reference/typescript/resources/responses
