@@ -35,6 +35,9 @@ function makeProject({ adapters = ['claude-code'] } = {}) {
   walk(dir);
   const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
   cfg.adapters = adapters;
+  const first = adapters[0] ?? 'codex';
+  cfg.agents = { product: first, orchestrator: first };
+  if (!adapters.includes('chatgpt')) delete cfg.agents.product;
   fs.writeFileSync(path.join(dir, 'framework.config.json'), JSON.stringify(cfg, null, 2));
   return dir;
 }
@@ -65,6 +68,7 @@ const validTask = `# Task: T
 - Change class: S1
 - Owner: HUMAN LEAD
 - Execution profile: dual-agent
+- Implementer: claude-code
 - Implementation authorized: YES
 
 ## Goal
@@ -90,6 +94,13 @@ test('minimal project passes', () => {
   assert.equal(code, 0, out);
   assert.match(out, /PASS: framework structure/);
   assert.match(out, /PASS: docs\/ai\/workflow\.md/);
+});
+
+test('chatgpt plus claude role bindings pass', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code'] });
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+  assert.match(out, /PASS: adapter descriptor adapters\/chatgpt\/adapter\.json/);
 });
 
 test('minimal project with both adapters passes', () => {
@@ -217,6 +228,30 @@ test('unknown adapter fails', () => {
   const dir = makeProject();
   edit(dir, 'framework.config.json', (s) => s.replace('"claude-code"', '"vim"'));
   expectFail(dir, /unknown adapter: vim/);
+});
+
+test('role binding to disabled adapter fails', () => {
+  const dir = makeProject();
+  edit(dir, 'framework.config.json', (s) => s.replace('"product": "claude-code"', '"product": "chatgpt"'));
+  expectFail(dir, /agents\.product references disabled adapter: chatgpt/);
+});
+
+test('role binding to unsupported adapter role fails', () => {
+  const dir = makeProject({ adapters: ['claude-code', 'codex'] });
+  edit(dir, 'framework.config.json', (s) => s.replace('"product": "claude-code"', '"product": "codex"'));
+  expectFail(dir, /agents\.product adapter codex does not support role product/);
+});
+
+test('invalid adapter descriptor fails', () => {
+  const dir = makeProject();
+  edit(dir, 'adapters/claude-code/adapter.json', (s) => s.replace('"roles": ["orchestrator", "implementer"]', '"roles": ["reviewer"]'));
+  expectFail(dir, /adapter\.json: unknown role: reviewer/);
+});
+
+test('dual-agent task with disabled implementer fails', () => {
+  const dir = makeProject();
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask.replace('- Implementer: claude-code', '- Implementer: copilot'));
+  expectFail(dir, /Implementer copilot is not an enabled adapter/);
 });
 
 test('claude-code adapter enabled but file missing fails', () => {
