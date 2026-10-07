@@ -1,6 +1,10 @@
 {
-  "frameworkVersion": "4.2",
-  "adapters": ["claude-code"],
+  "frameworkVersion": "4.3",
+  "adapters": ["chatgpt", "claude-code"],
+  "agents": {
+    "product": "chatgpt",
+    "orchestrator": "claude-code"
+  },
   "requiredFiles": [],
   "requiredTokens": {},
   "taskDir": "docs/tasks",

@@ -1,14 +1,14 @@
 # Product / Requirement Agent v1
 
 Status: DESIGN PROPOSAL
-Target framework: AI Dev Framework v4.2
+Target framework: AI Dev Framework v4.3
 Goal: add IDEA → REQUIREMENT without changing the existing S0/S1/S2 execution core.
 
 ## 1. Design principle
 
 The new layer owns discovery and requirement quality. It does not own architecture or implementation.
 
-IDEA → DISCOVERY → REQUIREMENT → READINESS GATE → Claude ORCHESTRATOR → TASK CONTRACT → existing approval/execution flow
+IDEA → DISCOVERY → REQUIREMENT → READINESS GATE → configured ORCHESTRATOR adapter → TASK CONTRACT → existing approval/execution flow
 
 READY means ready for development planning. READY never means implementation authorized.
 
@@ -27,10 +27,9 @@ Product Agent:
 
 templates/docs/product/PRODUCT_AGENT.md
 
-Claude handoff adapter:
+ORCHESTRATOR handoff adapter:
 
-adapters/claude-code/REQUIREMENT_HANDOFF.md
-adapters/claude-code/workflows/requirement-to-task.yml
+The handoff documentation and workflow belong to the configured ORCHESTRATOR adapter. Claude Code remains one supported adapter example; another adapter may provide the same role without changing Core.
 
 Deterministic gate:
 
@@ -126,19 +125,19 @@ Otherwise status is NEEDS_CLARIFICATION.
 
 The deterministic checker should validate the document structure and the READY conditions. Model judgment is still required for semantics, so the checker is a gate, not a replacement for review.
 
-## 7. GPT output strategy
+## 7. Product adapter execution
 
-For ChatGPT use, the Product Agent instructions live in `docs/product/PRODUCT_AGENT.md`. In a ChatGPT session with repository write access, ChatGPT reads the connected repository, interviews HUMAN LEAD, then creates the canonical requirement file, branch, commit and GitHub PR directly.
+The Product Agent instructions live in `docs/product/PRODUCT_AGENT.md`. A configured product adapter reads the connected repository, interviews HUMAN LEAD, then creates the canonical requirement file, branch, commit and GitHub PR according to the adapter capabilities.
 
-No local CLI, OpenAI API key, or local Git wrapper is required.
+No local Product Agent CLI/API runner is required by Framework Core.
 
 The Markdown requirement remains the repository source of truth.
 
-## 8. Claude handoff
+## 8. ORCHESTRATOR handoff
 
-When a READY requirement is committed to a project PR, the Claude workflow is triggered by a path filter for docs/product/requirements/REQ-*.md.
+When a READY requirement is committed to a project PR, the configured ORCHESTRATOR adapter workflow may be triggered by a path filter for docs/product/requirements/REQ-*.md.
 
-Claude acts as ORCHESTRATOR only.
+The configured ORCHESTRATOR adapter acts in the ORCHESTRATOR role only.
 
 Claude must:
 1. Read AGENTS.md.
@@ -170,7 +169,7 @@ Why pull_request instead of push to main:
 
 The workflow should fail closed when the deterministic requirement checker is missing or when no READY requirement is found.
 
-The Claude Code GitHub Action currently supports a prompt, prompt file, CLI arguments, GitHub permissions and additional permissions. Its documentation also states that it runs on the GitHub runner and can modify repository content according to the workflow permissions.
+A provider-specific automation mechanism, if used, belongs to its adapter and must respect the same repository permissions and framework authority boundaries.
 
 ## 10. Existing framework compatibility
 

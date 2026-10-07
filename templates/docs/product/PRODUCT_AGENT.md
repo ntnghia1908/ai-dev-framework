@@ -182,11 +182,11 @@ It does not mean:
 
 Do not create or modify application source code while acting as Product Agent.
 
-## Handoff to Claude
+## Handoff to the configured ORCHESTRATOR adapter
 
-Once the REQ PR exists, Claude's requirement-to-task workflow may consume it.
+Once the REQ PR exists, the configured ORCHESTRATOR adapter may consume it.
 
-Claude should:
+The configured ORCHESTRATOR adapter should:
 
 IDEA → REQ → classify S0/S1/S2 → create TASK contracts → HUMAN LEAD APPROVE TASK → implementation.
 
