@@ -231,6 +231,7 @@ Included:
 - Canonical REQ template.
 - Readiness gate.
 - OpenAI adapter/system instructions.
+- OpenAI CLI runner with interview, validation, commit, push and PR.
 - Claude requirement-to-task handoff.
 - Deterministic requirement checker.
 - GitHub Action example.
