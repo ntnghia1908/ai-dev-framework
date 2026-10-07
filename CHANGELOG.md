@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.3 — 2026-10-07
+
+- Accepted and implemented Agent Adapter Architecture v1 (ADR-001): provider-neutral role contracts, adapter descriptors/registry validation, project role bindings and task-level IMPLEMENTER compatibility checks.
+- Added ChatGPT Product Agent adapter while preserving the connected-session model; no local Product Agent runner was reintroduced.
+- Migrated framework version/configuration to 4.3 and preserved Claude Code, Copilot and Codex adapter compatibility.
+- Product Layer and installation/bootstrap documentation now describe roles and adapters separately.
+
+
 Mỗi version ghi thay đổi ở Core, template, adapter hoặc checker. Rule hiện hành nằm ở `core/`; file này chỉ là lịch sử.
 
 ## v4.2 — 2026-09-29
