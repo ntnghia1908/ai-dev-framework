@@ -2,7 +2,7 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSED |
+| Status | ACCEPTED |
 | Date | 2026-10-07 |
 | Decision owner | HUMAN LEAD |
 | Scope | Product / Requirement Agent operating protocol |
@@ -319,7 +319,7 @@ The Product Agent does not automatically authorize planning, task approval or im
 
 ## Implementation gate
 
-This ADR is **PROPOSED**.
+This ADR is **ACCEPTED** by HUMAN LEAD on 2026-10-07.
 
 If accepted, implementation requires a separate S2 task contract. The first implementation activity should be a dogfood run on `faculty-app-platform` using the planned shared Auth Service as the real Product Agent case.
 
