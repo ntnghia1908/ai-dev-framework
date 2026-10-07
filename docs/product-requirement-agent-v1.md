@@ -1,6 +1,6 @@
 # Product / Requirement Agent v1
 
-Status: DESIGN PROPOSAL
+Status: CURRENT — Genesis-integrated Product Agent protocol
 Target framework: AI Dev Framework v4.3
 Goal: add IDEA → REQUIREMENT without changing the existing S0/S1/S2 execution core.
 
@@ -70,7 +70,7 @@ Layer 2: product-owner clarification
 - What is explicitly out of scope?
 - Which unknowns are blocking?
 
-The agent should ask small batches of high-value questions, normally 2–5 at a time.
+The agent follows Genesis: one high-value question per turn by default, with tightly coupled questions allowed when they resolve one uncertainty together.
 
 ## 5. Requirement contract
 
@@ -208,6 +208,7 @@ IDEA → REQ-001 → FR/AC → TASK-001 → verification → implementation
 
 Included:
 - Product / Requirement Agent behavior.
+- Genesis internal operating protocol, Project Brief, uncertainty handling and readiness boundary.
 - Canonical REQ template.
 - Readiness gate.
 - Claude requirement-to-task handoff.
