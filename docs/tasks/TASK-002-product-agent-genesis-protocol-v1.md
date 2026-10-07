@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: DRAFT
+- Status: APPROVED
 - Type: CHANGE
 - Change class: S2
 - Owner: ORCHESTRATOR
@@ -10,8 +10,8 @@
 - Implementer: claude-code — primary framework implementation adapter
 - Human Lead: HUMAN LEAD
 - Base commit / branch: 691b204a1695b62ebb1d3b349c0451aef3a0b05f / proposal/product-agent-genesis-protocol-v1
-- Human Lead approval: pending
-- Implementation authorized: NO
+- Human Lead approval: accepted on 2026-10-07
+- Implementation authorized: YES
 
 ## Goal
 
@@ -48,7 +48,7 @@ The implementation must then dogfood the protocol on `faculty-app-platform` usin
 
 ## Authority / key decisions
 
-- ADR-002: Product Agent Genesis Protocol v1 — PROPOSED; must be ACCEPTED before implementation.
+- ADR-002: Product Agent Genesis Protocol v1 — ACCEPTED by HUMAN LEAD on 2026-10-07.
 - `core/docs/ai/workflow.md` remains authoritative for governance and HUMAN LEAD decision gates.
 - `core/docs/ai/agent-adapter-contract.md` remains authoritative for the provider-neutral Product Agent role.
 - Source basis: `Genesis Protocol v0.1` supplied by HUMAN LEAD.
@@ -113,3 +113,9 @@ The implementation must then dogfood the protocol on `faculty-app-platform` usin
 - Known limitations:
 - Dogfood evidence:
 - PR:
+
+## Approval record
+
+- HUMAN LEAD approval: ACCEPTED
+- Approval date: 2026-10-07
+- Implementation authorized: YES
