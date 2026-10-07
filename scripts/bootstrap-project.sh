@@ -68,3 +68,5 @@ echo "Next: fill project-specific markers, run:"
 echo "  node scripts/framework-check.mjs"
 echo
 echo "Do not start Product Agent requirement interview until bootstrap is complete."
+
+# Note: PROJECT_BOOTSTRAP.md is copied explicitly so the new project retains the bootstrap contract.
