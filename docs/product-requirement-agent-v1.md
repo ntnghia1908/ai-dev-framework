@@ -23,10 +23,9 @@ Kit template:
 templates/docs/product/README.md
 templates/docs/product/requirements/_template.md
 
-OpenAI adapter:
+Product Agent:
 
-adapters/openai-product-agent/README.md
-adapters/openai-product-agent/SYSTEM.md
+templates/docs/product/PRODUCT_AGENT.md
 
 Claude handoff adapter:
 
@@ -129,27 +128,9 @@ The deterministic checker should validate the document structure and the READY c
 
 ## 7. GPT output strategy
 
-For ChatGPT use, the system instructions in the OpenAI adapter are enough to produce the requirement document.
+For ChatGPT use, the Product Agent instructions live in `docs/product/PRODUCT_AGENT.md`. ChatGPT reads the connected repository, interviews HUMAN LEAD, then creates the canonical requirement file directly in GitHub.
 
-For API automation, use a structured response contract and then render the Markdown artifact. OpenAI Structured Outputs supports constraining the response to a supplied JSON Schema. This makes the machine handoff less fragile.
-
-Internal JSON fields should mirror the Markdown sections:
-- id
-- status
-- title
-- problem
-- goal
-- actors
-- current_workflow
-- desired_workflow
-- functional_requirements
-- non_functional_requirements
-- business_rules
-- edge_cases
-- acceptance_criteria
-- out_of_scope
-- assumptions
-- open_questions
+No local CLI, OpenAI API key, or local Git wrapper is required.
 
 The Markdown requirement remains the repository source of truth.
 
@@ -230,8 +211,6 @@ Included:
 - Product / Requirement Agent behavior.
 - Canonical REQ template.
 - Readiness gate.
-- OpenAI adapter/system instructions.
-- OpenAI CLI runner with interview, validation, commit, push and PR.
 - Claude requirement-to-task handoff.
 - Deterministic requirement checker.
 - GitHub Action example.
