@@ -148,7 +148,7 @@ test('current-state wrong Status fails', () => {
 test('Version not in history fails', () => {
   const dir = makeProject();
   edit(dir, 'docs/ai/framework-history.md', (s) => s.replace('## v4.3', '## v4.2'));
-  expectFail(dir, /framework-history\.md missing entry for workflow Version 4\.2/);
+  expectFail(dir, /framework-history\.md missing entry for workflow Version 4\.3/);
 });
 
 test('Version differs from config fails', () => {
@@ -237,13 +237,13 @@ test('unknown adapter fails', () => {
 test('role binding to disabled adapter fails', () => {
   const dir = makeProject();
   edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "chatgpt"'));
-  expectFail(dir, /agents\.product references disabled adapter: chatgpt/);
+  expectFail(dir, /agents\.orchestrator references disabled adapter: chatgpt/);
 });
 
 test('role binding to unsupported adapter role fails', () => {
   const dir = makeProject({ adapters: ['claude-code', 'codex'] });
   edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "codex"'));
-  expectFail(dir, /agents\.product adapter codex does not support role product/);
+  expectFail(dir, /agents\.orchestrator adapter codex does not support role orchestrator/);
 });
 
 test('invalid adapter descriptor fails', () => {
