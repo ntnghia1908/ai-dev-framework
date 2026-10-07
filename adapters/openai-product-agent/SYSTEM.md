@@ -25,8 +25,7 @@ Always include Out of scope.
 
 ## Readiness gate
 Set READY only when problem, goal, actors, context, desired workflow, requirements, relevant rules/edge cases, testable AC, and out-of-scope are clear.
-Open questions must be empty or explicitly deferred without blocking planning.
-Otherwise use NEEDS_CLARIFICATION.
+Open questions must be empty for the CLI to mark the requirement READY. Otherwise use NEEDS_CLARIFICATION.
 
 ## Output
 Use the canonical requirement template.
