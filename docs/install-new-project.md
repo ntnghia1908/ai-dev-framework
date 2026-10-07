@@ -30,18 +30,25 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
    - `docs/product/PRODUCT_AGENT.md`
    - `docs/product/requirements/_template.md`
 
-   Khi dùng ChatGPT kết nối repository, chỉ cần nói `Tôi có một IDEA...`. ChatGPT sẽ interview, tạo REQ, commit và tạo GitHub PR.
+   Chọn các adapter cần dùng và copy đúng adapter vào project. Adapter là implementation của role; không suy luận role từ tên model/vendor.
 
-   Claude Code:
+   ChatGPT Product Agent (connected session):
    ```bash
-   cp -r "$KIT/adapters/claude-code/.claude" .
-   mkdir -p .github/workflows
-   cp "$KIT/adapters/claude-code/workflows/requirement-to-task.yml" .github/workflows/
+   cp -a "$KIT/adapters/chatgpt/." .
+   ```
+
+   Claude Code ORCHESTRATOR / IMPLEMENTER:
+   ```bash
+   cp -a "$KIT/adapters/claude-code/." .
    ```
 
    Copilot / Codex: cài theo adapter tương ứng nếu project cần.
 
-   Chỉ chép adapter bạn dùng, rồi chỉnh `adapters` trong `framework.config.json` cho khớp.
+   Product / Requirement layer đã nằm trong Project Layer:
+   - `docs/product/PRODUCT_AGENT.md`
+   - `docs/product/requirements/_template.md`
+
+   Chỉ chép adapter bạn dùng, rồi chỉnh `adapters` và `agents` trong `framework.config.json` cho khớp.
 
 4. **Checker**:
 
