@@ -1,6 +1,6 @@
 # AI Dev Framework — starter kit
 
-Bộ khung quy trình để một người (HUMAN LEAD) và một hoặc hai AI agent làm việc trong cùng repository mà không lệch scope: repository là source of truth, agent tự thực thi bên trong boundary do người duyệt.
+Bộ khung quy trình để một người (HUMAN LEAD) và một hoặc hai AI agent làm việc trong cùng repository mà không lệch scope: Product Agent biến IDEA thành REQUIREMENT; repository là source of truth; agent tự thực thi bên trong boundary do người duyệt.
 
 Phiên bản hiện tại: **4.2** (xem `VERSION`, `CHANGELOG.md`). Framework v4 gốc được phát triển trong một project web trước đó; kit này là bản tách ra để dùng lại cho project bất kỳ, đã chạy thật qua nhiều task ở project dùng nó đầu tiên.
 
