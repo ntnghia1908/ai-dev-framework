@@ -6,6 +6,7 @@ Turns an IDEA into docs/product/requirements/REQ-<number>-<slug>.md and can hand
 
 Linux / macOS / Git Bash:
 
+    chmod +x product   # one time after copying/cloning if needed
     ./product "I want an app to manage thesis"
 
 Windows PowerShell / CMD:
