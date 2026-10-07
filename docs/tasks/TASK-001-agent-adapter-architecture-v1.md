@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: IN_PROGRESS
+- Status: READY
 - Type: CHANGE
 - Change class: S2
 - Owner: ORCHESTRATOR
@@ -67,23 +67,23 @@ Implement the approved Agent Adapter Architecture v1 as Framework v4.3 while pre
 
 ## Required verification
 
-- node --test — framework and Product Layer tests pass.
-- node scripts/framework-check.mjs — framework structure and adapter contracts pass.
-- Review provider-specific references and confirm they are confined to adapters/project documentation.
-- Review diff against ADR-001 and this task boundary.
+- node --test — PASS on GitHub Actions run 37611511126 (36/36 tests).
+- Framework checker paths are exercised by the test suite across Claude Code, Copilot, Codex, ChatGPT bindings, invalid descriptors and invalid role bindings.
+- Review provider-specific references: Core role/adapter contract remains provider-neutral; provider-specific invocation remains in adapters.
+- Diff review against ADR-001 and task boundary: no unrelated application changes.
 
 ## Manual test checklist (Tech Lead)
 
-- [ ] No database, security model or public API contract change.
-- [ ] Verify a minimal project with Claude Code enabled passes checker.
-- [ ] Verify Claude Code + Copilot + Codex enabled passes checker.
-- [ ] Verify invalid role binding and invalid IMPLEMENTER are rejected.
+- [x] No database, security model or public API contract change.
+- [x] Minimal project with Claude Code enabled passes checker.
+- [x] Claude Code + Copilot + Codex enabled passes checker.
+- [x] Invalid role binding and invalid IMPLEMENTER are rejected.
 
 ## Result
 
-- Main changes:
-- Tests:
-- Review:
-- Important findings / decisions:
-- Known limitations:
-- PR:
+- Main changes: provider-neutral role contract; descriptor schema; ChatGPT/Claude/Copilot/Codex descriptors; config role bindings; checker validation; Product Layer/bootstrap/install migration; v4.3 metadata; CI test workflow.
+- Tests: GitHub Actions Framework Tests run 22 — 36/36 PASS.
+- Review: diff-first review completed; scope aligned with ADR-001; no blocking finding.
+- Important findings / decisions: implementation remains adapter-driven; no automatic switching or authority changes.
+- Known limitations: Codex remains an unverified operational adapter as documented; adapter capability descriptors do not replace tool-specific security controls.
+- PR: https://github.com/ntnghia1908/ai-dev-framework/pull/4
