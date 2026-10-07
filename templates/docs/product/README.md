@@ -1,20 +1,47 @@
 # Product / Requirement Layer
 
-Canonical path: docs/product/requirements/REQ-<number>-<slug>.md
+Canonical requirement path:
 
-Purpose: convert an IDEA into a requirement that is ready for development planning.
+`docs/product/requirements/REQ-<number>-<slug>.md`
 
-Flow:
-IDEA → DISCOVERY → REQUIREMENT → READINESS → READY → Claude ORCHESTRATOR → TASK CONTRACT
+Canonical Product Agent instructions:
 
-Requirement READY does not authorize implementation.
+`docs/product/PRODUCT_AGENT.md`
 
-See adapters/openai-product-agent/SYSTEM.md for the Product Agent instructions and templates/docs/product/requirements/_template.md for the canonical artifact.
+## Purpose
 
-Claude consumes READY requirements through adapters/claude-code/REQUIREMENT_HANDOFF.md.
+Convert:
 
-Status:
-- DRAFT
-- NEEDS_CLARIFICATION
-- READY
-- OBSOLETE
+```
+IDEA → DISCOVERY → REQUIREMENT → READINESS → READY → Claude ORCHESTRATOR
+```
+
+The Product Agent runs in the connected ChatGPT session. No local CLI or OpenAI API runner is required.
+
+## What the Product Agent does
+
+- interviews HUMAN LEAD;
+- understands the user problem and workflow;
+- captures functional requirements, rules and edge cases;
+- writes observable acceptance criteria;
+- validates readiness;
+- creates the REQ file, branch, commit and GitHub PR.
+
+It does not write application code or authorize implementation.
+
+## Status
+
+- `DRAFT`
+- `NEEDS_CLARIFICATION`
+- `READY`
+- `OBSOLETE`
+
+## READY meaning
+
+`READY` means **ready for development planning**.
+
+It does not mean architecture approved, task approved, implementation authorized or merge authorized.
+
+## Next step
+
+A READY requirement PR can be consumed by the Claude requirement-to-task workflow, which creates DRAFT task contracts using the existing task template.
