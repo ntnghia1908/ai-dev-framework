@@ -40,8 +40,8 @@ jobs:
 
           mkdir -p .claude .github/workflows adapters/chatgpt adapters/claude-code
           cp -a "$framework/adapters/chatgpt/." adapters/chatgpt/
+          cp -a "$framework/adapters/claude-code/." adapters/claude-code/
           cp -a "$framework/adapters/claude-code/.claude/." .claude/
-          cp "$framework/adapters/claude-code/adapter.json" adapters/claude-code/adapter.json
 
           # GitHub Actions' built-in GITHUB_TOKEN cannot push workflow files.
           # The caller adds adapter workflow files after this bulk bootstrap run.
