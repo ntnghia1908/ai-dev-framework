@@ -29,8 +29,7 @@ templates/docs/product/PRODUCT_AGENT.md
 
 ORCHESTRATOR handoff adapter:
 
-adapters/claude-code/REQUIREMENT_HANDOFF.md
-adapters/claude-code/workflows/requirement-to-task.yml
+The handoff documentation and workflow belong to the configured ORCHESTRATOR adapter. Claude Code remains one supported adapter example; another adapter may provide the same role without changing Core.
 
 Deterministic gate:
 
