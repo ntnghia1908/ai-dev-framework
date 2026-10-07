@@ -16,7 +16,7 @@ Convert:
 IDEA → DISCOVERY → REQUIREMENT → READINESS → READY → configured ORCHESTRATOR adapter
 ```
 
-The Product Agent runs in the connected ChatGPT session. No local CLI or OpenAI API runner is required.
+The Product Agent runs through the configured product adapter. No local Product Agent CLI/API runner is required by Framework Core.
 
 ## What the Product Agent does
 
