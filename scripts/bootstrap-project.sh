@@ -57,10 +57,15 @@ mkdir -p "$TARGET/scripts"
 cp "$KIT_ROOT/scripts/framework-check.mjs" "$TARGET/scripts/"
 cp "$KIT_ROOT/scripts/product-check.mjs" "$TARGET/scripts/"
 
-# Claude Code adapter
+# Enabled adapter set from the v4.3 template config.
+# Product Agent adapter (connected ChatGPT session; no local runner).
+copy_dir "$KIT_ROOT/adapters/chatgpt" "$TARGET/adapters/chatgpt"
+
+# Claude Code ORCHESTRATOR / IMPLEMENTER adapter.
 mkdir -p "$TARGET/.claude" "$TARGET/.github/workflows"
 copy_dir "$KIT_ROOT/adapters/claude-code/.claude" "$TARGET/.claude"
 cp "$KIT_ROOT/adapters/claude-code/workflows/requirement-to-task.yml" "$TARGET/.github/workflows/"
+cp "$KIT_ROOT/adapters/claude-code/adapter.json" "$TARGET/adapters/claude-code/adapter.json"
 
 echo
 echo "Bootstrap complete."
