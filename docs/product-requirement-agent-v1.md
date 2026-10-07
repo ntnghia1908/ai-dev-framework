@@ -1,14 +1,14 @@
 # Product / Requirement Agent v1
 
 Status: DESIGN PROPOSAL
-Target framework: AI Dev Framework v4.2
+Target framework: AI Dev Framework v4.3
 Goal: add IDEA → REQUIREMENT without changing the existing S0/S1/S2 execution core.
 
 ## 1. Design principle
 
 The new layer owns discovery and requirement quality. It does not own architecture or implementation.
 
-IDEA → DISCOVERY → REQUIREMENT → READINESS GATE → Claude ORCHESTRATOR → TASK CONTRACT → existing approval/execution flow
+IDEA → DISCOVERY → REQUIREMENT → READINESS GATE → configured ORCHESTRATOR adapter → TASK CONTRACT → existing approval/execution flow
 
 READY means ready for development planning. READY never means implementation authorized.
 
@@ -27,7 +27,7 @@ Product Agent:
 
 templates/docs/product/PRODUCT_AGENT.md
 
-Claude handoff adapter:
+ORCHESTRATOR handoff adapter:
 
 adapters/claude-code/REQUIREMENT_HANDOFF.md
 adapters/claude-code/workflows/requirement-to-task.yml
@@ -134,11 +134,11 @@ No local CLI, OpenAI API key, or local Git wrapper is required.
 
 The Markdown requirement remains the repository source of truth.
 
-## 8. Claude handoff
+## 8. ORCHESTRATOR handoff
 
 When a READY requirement is committed to a project PR, the Claude workflow is triggered by a path filter for docs/product/requirements/REQ-*.md.
 
-Claude acts as ORCHESTRATOR only.
+The configured ORCHESTRATOR adapter acts in the ORCHESTRATOR role only.
 
 Claude must:
 1. Read AGENTS.md.
