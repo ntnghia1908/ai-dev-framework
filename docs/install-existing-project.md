@@ -30,7 +30,7 @@ Chép adapter cần dùng; nếu file đích đã có, hợp nhất tay (giữ p
 
 ## 5. Ghi adoption
 
-`FRAMEWORK_ADOPTION.md`: kit + tag + commit; **Adopted** (dùng nguyên), **Adapted** (chỉnh cho project), **Not adopted** (cố ý bỏ, kèm lý do). Điền `framework-history.md` (entry `## v4.2`) và `framework.config.json`.
+`FRAMEWORK_ADOPTION.md`: kit + tag + commit; **Adopted** (dùng nguyên), **Adapted** (chỉnh cho project), **Not adopted** (cố ý bỏ, kèm lý do). Điền `framework-history.md` (entry `## v4.3`) và `framework.config.json`.
 
 ## 6. Kiểm tra và pilot
 
