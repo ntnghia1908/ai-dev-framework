@@ -26,6 +26,16 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
 
 3. **Adapter** cho tool đang dùng:
 
+   Product / Requirement layer (khuyến nghị nếu muốn IDEA → REQUIREMENT):
+
+   ```bash
+   cp -r "$KIT/adapters/openai-product-agent/." .
+   cp "$KIT/product" .
+   cp "$KIT/product.cmd" .
+   ```
+
+   Sau đó dùng `./product "..."` (Linux / Git Bash) hoặc `.\\product.cmd "..."` (Windows PowerShell / CMD).
+
    ```bash
    cp -r "$KIT/adapters/claude-code/.claude" .    # Claude Code (CLAUDE.md đã có ở bước 2)
    cp -r "$KIT/adapters/copilot/.github" .        # Copilot (đã pilot gói Free, xem adapters/copilot/README.md)
