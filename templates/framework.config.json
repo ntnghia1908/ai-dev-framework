@@ -5,6 +5,10 @@
     "product": "chatgpt",
     "orchestrator": "claude-code"
   },
+  "governance": {
+    "taskAuthorization": "boundary",
+    "maxParallelImplementers": 3
+  },
   "requiredFiles": [],
   "requiredTokens": {},
   "taskDir": "docs/tasks",
