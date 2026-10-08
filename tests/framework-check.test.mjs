@@ -68,12 +68,17 @@ const validTask = `# Task: T
 
 ## Status / Approval
 
-- Status: APPROVED
+- Status: IN_PROGRESS
 - Type: CHANGE
 - Change class: S1
 - Owner: HUMAN LEAD
 - Execution profile: dual-agent
 - Implementer: claude-code
+- Authorization mode: boundary
+- Authorization source: ADR-TEST / Architecture Approval
+- Parallel group: P1
+- Owned paths: src/a
+- Dependencies: none
 - Implementation authorized: YES
 
 ## Goal
@@ -172,12 +177,25 @@ test('task invalid value and missing section fail', () => {
   assert.match(out, /missing section: Goal/);
 });
 
-test('valid task is reported', () => {
+test('valid boundary task is reported', () => {
   const dir = makeProject();
   fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask);
   const { code, out } = run(dir);
   assert.equal(code, 0, out);
   assert.match(out, /PASS: task contract docs\/tasks\/T1\.md/);
+});
+
+test('legacy task-approval mode remains supported', () => {
+  const dir = makeProject();
+  edit(dir, 'framework.config.json', s => s.replace('"taskAuthorization": "boundary"', '"taskAuthorization": "task"'));
+  const task = validTask
+    .replace('- Status: IN_PROGRESS', '- Status: APPROVED')
+    .replace('- Authorization mode: boundary', '- Authorization mode: task')
+    .replace('- Authorization source: ADR-TEST / Architecture Approval', '- Authorization source: APPROVED TASK')
+    .replace('- Implementation authorized: YES', '- Implementation authorized: YES');
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
 });
 
 test('missing taskDir / decisionDir is skipped', () => {
