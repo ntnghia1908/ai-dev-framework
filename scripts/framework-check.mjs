@@ -54,6 +54,14 @@ else {
   for (const key of ['taskDir', 'decisionDir']) {
     if (key in config && (typeof config[key] !== 'string' || !config[key])) fail(`${CONFIG}: ${key} must be a non-empty string`);
   }
+  if ('governance' in config) {
+    const g = config.governance;
+    if (g === null || typeof g !== 'object' || Array.isArray(g)) fail(`${CONFIG}: governance must be an object`);
+    else {
+      if ('taskAuthorization' in g && !['task', 'boundary'].includes(g.taskAuthorization)) fail(`${CONFIG}: governance.taskAuthorization must be task or boundary`);
+      if ('maxParallelImplementers' in g && (!Number.isInteger(g.maxParallelImplementers) || g.maxParallelImplementers < 1 || g.maxParallelImplementers > 3)) fail(`${CONFIG}: governance.maxParallelImplementers must be an integer from 1 to 3`);
+    }
+  }
   if ('agents' in config) {
     const agents = config.agents;
     if (agents === null || typeof agents !== 'object' || Array.isArray(agents)) {
@@ -115,6 +123,9 @@ for (const id of adapters) {
 }
 
 const boundAgents = config.agents ?? {};
+const governance = config.governance ?? {};
+const taskAuthorization = governance.taskAuthorization ?? 'task';
+const maxParallelImplementers = governance.maxParallelImplementers ?? 1;
 for (const role of ROLE_NAMES) {
   if (!(role in boundAgents)) continue;
   const adapterId = boundAgents[role];
@@ -161,6 +172,8 @@ function metadata(rel, key) {
   return line ? line.split('|')[2].trim() : null;
 }
 const status = (rel) => metadata(rel, 'Status');
+
+if (maxParallelImplementers < 1 || maxParallelImplementers > 3) fail(`${CONFIG}: governance.maxParallelImplementers must be an integer from 1 to 3`);
 
 for (const rel of ['docs/ai/workflow.md', 'docs/ai/execution-profiles.md', 'docs/ai/project-profile.md', 'docs/ai/framework-history.md', 'docs/ai/agent-adapter-contract.md']) {
   if (exists(rel) && status(rel) !== 'CURRENT') fail(`${path.basename(rel)} must be CURRENT`);
@@ -235,6 +248,18 @@ for (const file of tasks) {
     const value = line ? line.slice(`- ${field}:`.length).trim() : '';
     if (!value) fail(`${rel}: missing field: ${field}`);
     else if (allowed && !allowed.includes(value)) fail(`${rel}: invalid ${field}: ${value}`);
+  }
+  const authorizationLine = lines.find((x) => x.startsWith('- Authorization mode:'));
+  const authorizationMode = authorizationLine?.slice('- Authorization mode:'.length).trim();
+  if (authorizationMode && !['task', 'boundary'].includes(authorizationMode)) fail(`${rel}: invalid Authorization mode: ${authorizationMode}`);
+  if (authorizationMode === 'boundary') {
+    const sourceLine = lines.find((x) => x.startsWith('- Authorization source:'));
+    const source = sourceLine?.slice('- Authorization source:'.length).trim();
+    if (!source || source.startsWith('<')) fail(`${rel}: boundary authorization requires Authorization source`);
+    if (taskAuthorization !== 'boundary') fail(`${rel}: task uses boundary authorization but ${CONFIG} governance.taskAuthorization is ${taskAuthorization}`);
+  }
+  if (authorizationMode === 'task' && taskAuthorization === 'boundary') {
+    // Explicit per-task authorization remains allowed for legacy/exception tasks, but boundary is the project default.
   }
   const profileLine = lines.find((x) => x.startsWith('- Execution profile:'));
   const profile = profileLine?.slice('- Execution profile:'.length).trim();
