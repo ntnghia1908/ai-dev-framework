@@ -220,15 +220,14 @@ test('invalid governance config fails', () => {
 
 test('boundary task requires authorization source', () => {
   const dir = makeProject();
-  const task = validTask.replace('- Status: APPROVED', '- Status: IN_PROGRESS').replace('- Implementation authorized: YES', '- Authorization mode: boundary\n- Authorization source: <missing>\n- Implementation authorized: YES');
+  const task = validTask.replace('- Authorization source: ADR-TEST / Architecture Approval\n', '');
   fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
   expectFail(dir, /boundary authorization requires Authorization source/);
 });
 
 test('valid boundary-authorized task passes', () => {
   const dir = makeProject();
-  const task = validTask.replace('- Status: APPROVED', '- Status: IN_PROGRESS').replace('- Implementation authorized: YES', '- Authorization mode: boundary\n- Authorization source: ADR-TEST / Architecture Approval\n- Parallel group: P1\n- Owned paths: src/a\n- Dependencies: none\n- Implementation authorized: YES');
-  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask);
   assert.equal(run(dir).code, 0);
 });
 
