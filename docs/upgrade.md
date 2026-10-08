@@ -4,6 +4,8 @@ Kit dùng version + tag (`VERSION`, `CHANGELOG.md`). Project chép (copy) Core v
 
 ## Các bước
 
+For v4.4, read the boundary-authorization and bounded-parallelism changes in the v4.4 changelog before upgrading. Existing projects may remain on `task` authorization; new projects from the template default to `boundary` with up to 3 parallel IMPLEMENTER instances.
+
 1. Đọc `CHANGELOG.md` từ version project đang dùng tới version đích; ghi lại thay đổi ảnh hưởng adapter, template và rule Core.
 2. Thay bản chép của kit: `docs/ai/workflow.md`, `docs/ai/execution-profiles.md` (từ `core/`) và `scripts/framework-check.mjs`, từ tag đích. Project không sửa Core nên đây là chép đè; nếu `git diff` cho thấy project từng sửa Core, tách phần đó sang `docs/ai/project-profile.md` trước.
 3. Với adapter đang dùng: so `adapters/<tool>/` của tag đích với bản của project và hợp nhất thay đổi (giữ chỉnh sửa riêng của project).
