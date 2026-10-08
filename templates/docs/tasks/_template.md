@@ -20,7 +20,7 @@
 - Human Lead approval: <pending / accepted / inherited from boundary>
 - Implementation authorized: NO
 
-Lifecycle: `DRAFT → APPROVED → IN_PROGRESS → READY`. DONE suy ra từ Git sau khi merge.
+Lifecycle: `task` mode = `DRAFT → APPROVED → IN_PROGRESS → READY`; `boundary` mode = `DRAFT → IN_PROGRESS → READY`. DONE suy ra từ Git sau khi merge.
 
 ## Goal
 
