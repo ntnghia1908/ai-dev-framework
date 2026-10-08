@@ -188,7 +188,7 @@ Once the REQ PR exists, the configured ORCHESTRATOR adapter may consume it.
 
 The configured ORCHESTRATOR adapter should:
 
-IDEA → REQ → classify S0/S1/S2 → create TASK contracts → HUMAN LEAD APPROVE TASK → implementation.
+IDEA → REQ → classify S0/S1/S2 → create TASK GRAPH/contracts → apply the project's governance authorization (`task` approval or an inherited HUMAN LEAD-approved boundary) → implementation.
 
 The Product Agent must not bypass that workflow.
 

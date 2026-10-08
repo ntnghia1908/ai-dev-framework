@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.4 — 2026-10-08
+
+- Added boundary authorization mode: a HUMAN LEAD-approved implementation boundary can authorize the ORCHESTRATOR to create and execute task contracts inside that boundary without a separate per-task approval gate.
+- Kept decision gates mandatory: scope, architecture, dependency, security model, public API, breaking change, significant shared abstraction, project-wide policy/convention and database/schema still require HUMAN LEAD decisions.
+- Added bounded task-level fan-out for dual-agent: multiple IMPLEMENTER instances may run concurrently on independent tasks, each with its own branch/worktree; project configuration caps concurrency at 1–3.
+- Added governance configuration and task fields for authorization source, parallel group, dependencies and owned paths; checker validates governance shape and boundary authorization references.
+- Preserved task governance mode for backward-compatible projects that still require per-task approval.
+
+
 ## v4.3 — 2026-10-07
 
 - Accepted and implemented Agent Adapter Architecture v1 (ADR-001): provider-neutral role contracts, adapter descriptors/registry validation, project role bindings and task-level IMPLEMENTER compatibility checks.

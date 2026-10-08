@@ -1,14 +1,14 @@
 # Product / Requirement Agent v1
 
 Status: DESIGN PROPOSAL
-Target framework: AI Dev Framework v4.3
+Target framework: AI Dev Framework v4.4
 Goal: add IDEA → REQUIREMENT without changing the existing S0/S1/S2 execution core.
 
 ## 1. Design principle
 
 The new layer owns discovery and requirement quality. It does not own architecture or implementation.
 
-IDEA → DISCOVERY → REQUIREMENT → READINESS GATE → configured ORCHESTRATOR adapter → TASK CONTRACT → existing approval/execution flow
+IDEA → DISCOVERY → REQUIREMENT → READINESS GATE → configured ORCHESTRATOR adapter → TASK GRAPH / CONTRACT → project governance authorization → execution
 
 READY means ready for development planning. READY never means implementation authorized.
 
@@ -178,8 +178,9 @@ No new task lifecycle is introduced.
 Requirement lifecycle:
 DRAFT → NEEDS_CLARIFICATION → READY
 
-Task lifecycle remains:
-DRAFT → APPROVED → IN_PROGRESS → READY
+Task lifecycle depends on governance mode:
+- `task`: DRAFT → APPROVED → IN_PROGRESS → READY
+- `boundary`: DRAFT → IN_PROGRESS → READY
 
 The existing task contract remains the canonical owner for:
 - Change class
@@ -215,12 +216,12 @@ Included:
 - GitHub Action example.
 
 Not included:
-- Automatic implementation without task approval.
+- Automatic implementation outside a HUMAN LEAD-approved boundary.
 - Automatic architecture decisions.
-- Changes to Core v4.2 normative workflow.
+- Changes to Core governance outside the approved v4.4 authorization/parallelism rules.
 - Multi-agent product discovery.
 
-## 13. Future v4.3 decision
+## 13. Future evolution
 
 After a real pilot, HUMAN LEAD can decide whether this Product / Requirement flow belongs in Framework Core.
 

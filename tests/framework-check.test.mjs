@@ -68,12 +68,17 @@ const validTask = `# Task: T
 
 ## Status / Approval
 
-- Status: APPROVED
+- Status: IN_PROGRESS
 - Type: CHANGE
 - Change class: S1
 - Owner: HUMAN LEAD
 - Execution profile: dual-agent
 - Implementer: claude-code
+- Authorization mode: boundary
+- Authorization source: ADR-TEST / Architecture Approval
+- Parallel group: P1
+- Owned paths: src/a
+- Dependencies: none
 - Implementation authorized: YES
 
 ## Goal
@@ -147,13 +152,13 @@ test('current-state wrong Status fails', () => {
 
 test('Version not in history fails', () => {
   const dir = makeProject();
-  edit(dir, 'docs/ai/framework-history.md', (s) => s.replace('## v4.3', '## v4.2'));
+  edit(dir, 'docs/ai/framework-history.md', (s) => s.replace('## v4.4', '## v4.2'));
   expectFail(dir, /framework-history\.md missing entry for workflow Version 4\.3/);
 });
 
 test('Version differs from config fails', () => {
   const dir = makeProject();
-  edit(dir, 'framework.config.json', (s) => s.replace('"4.3"', '"4.2"'));
+  edit(dir, 'framework.config.json', (s) => s.replace('"4.4"', '"4.2"'));
   expectFail(dir, /does not match framework\.config\.json/);
 });
 
@@ -172,7 +177,7 @@ test('task invalid value and missing section fail', () => {
   assert.match(out, /missing section: Goal/);
 });
 
-test('valid task is reported', () => {
+test('valid boundary task is reported', () => {
   const dir = makeProject();
   fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask);
   const { code, out } = run(dir);
@@ -180,11 +185,50 @@ test('valid task is reported', () => {
   assert.match(out, /PASS: task contract docs\/tasks\/T1\.md/);
 });
 
+test('legacy task-approval mode remains supported', () => {
+  const dir = makeProject();
+  edit(dir, 'framework.config.json', s => s.replace('"taskAuthorization": "boundary"', '"taskAuthorization": "task"'));
+  const task = validTask
+    .replace('- Status: IN_PROGRESS', '- Status: APPROVED')
+    .replace('- Authorization mode: boundary', '- Authorization mode: task')
+    .replace('- Authorization source: ADR-TEST / Architecture Approval', '- Authorization source: APPROVED TASK')
+    .replace('- Implementation authorized: YES', '- Implementation authorized: YES');
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+});
+
 test('missing taskDir / decisionDir is skipped', () => {
   const dir = makeProject();
   edit(dir, 'framework.config.json', (s) => s.replace('"docs/decisions"', '"nope/decisions"').replace('"docs/tasks"', '"nope/tasks"'));
   const { code, out } = run(dir);
   assert.equal(code, 0, out);
+});
+
+test('boundary governance config passes', () => {
+  const dir = makeProject();
+  const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
+  assert.deepEqual(cfg.governance, { taskAuthorization: 'boundary', maxParallelImplementers: 3 });
+  assert.equal(run(dir).code, 0);
+});
+
+test('invalid governance config fails', () => {
+  const dir = makeProject();
+  edit(dir, 'framework.config.json', (s) => s.replace('"maxParallelImplementers": 3', '"maxParallelImplementers": 4'));
+  expectFail(dir, /maxParallelImplementers must be an integer from 1 to 3/);
+});
+
+test('boundary task requires authorization source', () => {
+  const dir = makeProject();
+  const task = validTask.replace('- Authorization source: ADR-TEST / Architecture Approval\n', '');
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
+  expectFail(dir, /boundary authorization requires Authorization source/);
+});
+
+test('valid boundary-authorized task passes', () => {
+  const dir = makeProject();
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask);
+  assert.equal(run(dir).code, 0);
 });
 
 test('decision record with bad Status fails', () => {

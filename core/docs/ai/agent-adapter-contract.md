@@ -40,23 +40,25 @@ Must not:
 
 ### ORCHESTRATOR
 
-Input: READY requirement or approved task context.
+Input: READY requirement or an authorized planning/implementation boundary context.
 
-Output: task contracts, execution plan, delegation and review state.
+Output: task graph, task contracts, execution plan, delegation and review state.
 
 Must:
 
 - classify S0/S1/S2;
 - detect decision gates;
-- create task contracts;
-- keep implementation unauthorized until HUMAN LEAD approval;
-- review implementation against task contract and verification.
+- create task graph and task contracts;
+- select the project's authorization mode (`task` or `boundary`);
+- in `boundary` mode, inherit `Implementation Authorization` only for tasks fully inside the HUMAN LEAD-approved boundary;
+- fan out multiple IMPLEMENTER instances when task dependencies and ownership permit;
+- review each implementation against its task contract, task graph and verification.
 
 Must not bypass HUMAN LEAD authority.
 
 ### IMPLEMENTER
 
-Input: approved task contract, matching base commit/branch and `Implementation authorized: YES`.
+Input: authorized task contract, matching base commit/branch and `Implementation authorized: YES`.
 
 Output: implementation, verification evidence and READY report.
 
@@ -66,7 +68,7 @@ Must:
 - run required verification;
 - stop at READY after review convergence.
 
-Must not self-authorize, merge, or silently expand scope.
+Must not self-authorize, merge, or silently expand scope. Parallelism is assigned by ORCHESTRATOR; IMPLEMENTER does not claim ownership outside its assigned task/worktree.
 
 ## Adapter descriptor
 
@@ -107,7 +109,7 @@ The descriptor declares capability facts only. It does not grant authority. Fram
 
 Every configured role binding must point to an enabled adapter whose descriptor lists that role.
 
-IMPLEMENTER remains task-level: the task contract records the selected adapter and HUMAN LEAD approval covers that choice.
+IMPLEMENTER remains task-level: the task contract records the selected adapter/instance. In boundary-authorized mode, HUMAN LEAD approval is inherited from the recorded authorization boundary rather than repeated per task.
 
 ## Compatibility
 

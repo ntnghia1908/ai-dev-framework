@@ -37,7 +37,7 @@ Chỉ tạo `<module>/AGENTS.md` khi module có convention riêng đủ rõ. -->
 
 ## 5. Integration mechanism
 
-<!-- FILL: branch → commit → push → PR → merge; ai được làm bước nào; target branch. Mặc định gợi ý: commit sau khi task được approve; push / PR sau READY + HUMAN LEAD approval; merge do HUMAN LEAD. -->
+<!-- FILL: branch → commit → push → PR → merge; ai được làm bước nào; target branch. Với `governance.taskAuthorization=boundary`, task nằm hoàn toàn trong boundary đã được HUMAN LEAD chấp thuận không cần APPROVE TASK riêng. -->
 
 ## 6. Ownership
 
@@ -47,9 +47,13 @@ Chỉ tạo `<module>/AGENTS.md` khi module có convention riêng đủ rõ. -->
 
 <!-- FILL: profile được phép (`single-agent`, `dual-agent`). Profile của từng task là source of truth; không suy đoán profile từ tool/model. -->
 
+### Governance mode
+
+Project chọn `task` (cần APPROVE TASK) hoặc `boundary` (HUMAN LEAD cấp Implementation Authorization Boundary một lần). Ghi lựa chọn trong `framework.config.json` và không tự đổi giữa phiên.
+
 ### Danh sách IMPLEMENTER
 
-Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-agent`; HUMAN LEAD duyệt danh sách. Tên model / vendor chỉ ghi ở đây và ở adapter, không ghi vào Core.
+Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-agent`; HUMAN LEAD duyệt danh sách adapter được phép. Tên model / vendor chỉ ghi ở đây và ở adapter, không ghi vào Core.
 
 <!-- FILL: bảng dưới, mỗi dòng một adapter được phép. Ví dụ trung tính:
 
@@ -65,11 +69,11 @@ Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-
 
 Cách chọn:
 
-- ORCHESTRATOR chọn IMPLEMENTER lúc viết task contract và ghi vào field `Implementer`; `APPROVE TASK` duyệt luôn lựa chọn này.
+- ORCHESTRATOR chọn IMPLEMENTER lúc viết task contract và ghi vào field `Implementer`. Trong `boundary` mode, lựa chọn này không cần APPROVE TASK riêng; vẫn phải nằm trong danh sách adapter được phép.
 - Không đổi IMPLEMENTER giữa task (một writer trên một branch), trừ dự phòng đã khai ở bảng (hạn mức, auth, lỗi tool, circuit breaker); ghi việc đổi vào Result.
-- Nhiều IMPLEMENTER chạy song song chỉ khi tập file không giao nhau, mỗi người một branch (`docs/ai/workflow.md` §5).
+- Nhiều IMPLEMENTER chạy song song chỉ khi task graph chứng minh độc lập, mỗi người một branch/worktree, ownership không giao nhau và không vượt `governance.maxParallelImplementers` (`docs/ai/workflow.md` §5). Khuyến nghị 2–3 khi thực sự có thể song song; không tạo parallelism giả.
 
-## 8. Setup / tools
+## 9. Setup / tools
 
 <!-- FILL: runtime, cách cài, cách chạy, dependency được duyệt (hoặc pointer tới nơi ghi). -->
 

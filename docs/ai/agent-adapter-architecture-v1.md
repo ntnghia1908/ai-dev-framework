@@ -3,7 +3,7 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Target framework | v4.3 |
+| Target framework | v4.4 |
 | Decision | ACCEPTED by HUMAN LEAD; implemented under TASK-001 |
 | Scope | Agent roles, contracts, provider/tool adapters |
 
@@ -135,7 +135,9 @@ IMPLEMENTER remains task-level because the existing framework already supports a
 
 ## 7. Execution profile compatibility
 
-The architecture does not replace dual-agent, single-agent, S0/S1/S2, decision gates, task approval, implementation authorization, required verification, review, or integration ownership.
+The architecture does not replace dual-agent, single-agent, S0/S1/S2, decision gates, implementation authorization, required verification, review, or integration ownership.
+
+Framework v4.4 adds two governance capabilities around the existing role/adaptor model: `task` or `boundary` authorization, and bounded task-level fan-out of multiple IMPLEMENTER instances. These are governance/execution rules, not provider-specific behavior.
 
 It only changes how a role is bound to a concrete agent/tool.
 
@@ -169,8 +171,8 @@ Initial migration should be additive: introduce adapter descriptors; make checke
 
 - Change S0/S1/S2.
 - Change task lifecycle.
-- Authorize autonomous implementation.
-- Introduce a multi-agent swarm.
+- Authorize autonomous implementation outside a HUMAN LEAD-approved boundary.
+- Introduce an uncontrolled multi-agent swarm.
 - Add a central AI gateway/API.
 - Require one model family or paid provider.
 - Compare model quality.
@@ -182,8 +184,8 @@ Initial migration should be additive: introduce adapter descriptors; make checke
 Provider/tool capabilities do not override framework authority.
 
 - Product Agent cannot authorize implementation.
-- ORCHESTRATOR cannot bypass HUMAN LEAD approval.
-- IMPLEMENTER cannot self-authorize a task.
+- ORCHESTRATOR cannot bypass HUMAN LEAD boundary authorization or any decision gate.
+- IMPLEMENTER cannot self-authorize a task or expand its assigned boundary.
 - Adapter capability does not become project authority.
 - Model/vendor selection does not become a decision unless explicitly approved as project policy.
 

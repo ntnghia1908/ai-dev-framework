@@ -11,11 +11,16 @@
 - Execution profile: dual-agent | single-agent
 - Implementer: <chỉ dual-agent: adapter trong Danh sách IMPLEMENTER của docs/ai/project-profile.md §7 — lý do một dòng>
 - Human Lead: <nếu khác Owner>
+- Authorization mode: task | boundary
+- Authorization source: <approved boundary / decision / task approval reference>
+- Parallel group: <P0 / P1 / —>
+- Owned paths: <disjoint file/subsystem boundary>
+- Dependencies: <task IDs / none>
 - Base commit / branch: <SHA / branch>
-- Human Lead approval: <pending / accepted>
+- Human Lead approval: <pending / accepted / inherited from boundary>
 - Implementation authorized: NO
 
-Lifecycle: `DRAFT → APPROVED → IN_PROGRESS → READY`. DONE suy ra từ Git sau khi merge.
+Lifecycle: `task` mode = `DRAFT → APPROVED → IN_PROGRESS → READY`; `boundary` mode = `DRAFT → IN_PROGRESS → READY`. DONE suy ra từ Git sau khi merge.
 
 ## Goal
 
