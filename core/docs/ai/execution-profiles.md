@@ -3,10 +3,10 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Version | 4 |
+| Version | 4.4 |
 | Accepted by | CP0 framework adoption; FW-starter-kit: HUMAN LEAD 2026-09-29 |
 
-Profile chỉ **thêm** ràng buộc thực thi, không nới lỏng workflow. Decision gate, task boundary, một writer/branch, required verification, không claim PASS, quyền integrate và điều kiện dừng thuộc workflow.
+Profile chỉ **thêm** ràng buộc thực thi, không nới lỏng workflow. Decision gate, task boundary, một writer/branch, required verification, không claim PASS, quyền integrate và điều kiện dừng thuộc workflow. Governance mode (`task` hoặc `boundary`) quyết định task approval có phải gate hay không; execution profile không thể tự cấp authorization.
 
 Mỗi task ghi `Execution profile`. Một branch dùng một profile cho cùng task; đổi profile cần HUMAN LEAD approve.
 
