@@ -252,6 +252,7 @@ for (const file of tasks) {
   const authorizationLine = lines.find((x) => x.startsWith('- Authorization mode:'));
   const authorizationMode = authorizationLine?.slice('- Authorization mode:'.length).trim();
   if (authorizationMode && !['task', 'boundary'].includes(authorizationMode)) fail(`${rel}: invalid Authorization mode: ${authorizationMode}`);
+  if (taskAuthorization === 'boundary' && authorizationMode !== 'boundary') fail(`${rel}: boundary governance requires Authorization mode: boundary`);
   if (authorizationMode === 'boundary') {
     const sourceLine = lines.find((x) => x.startsWith('- Authorization source:'));
     const source = sourceLine?.slice('- Authorization source:'.length).trim();
