@@ -16,9 +16,9 @@ Mỗi task ghi `Execution profile`. Một branch dùng một profile cho cùng t
 |---|---|
 | HUMAN LEAD | người |
 | ORCHESTRATOR | agent A |
-| IMPLEMENTER | agent B |
+| IMPLEMENTER | một hoặc nhiều instance của agent B |
 
-IMPLEMENTER là người viết chính; ORCHESTRATOR review diff. ORCHESTRATOR chỉ micro-fix khi thay đổi cục bộ, hiển nhiên, không đổi behavior/contract/architecture/security/business logic và nằm trong giới hạn nhỏ của task. Lớn hơn thì trả IMPLEMENTER.
+IMPLEMENTER là người viết chính; ORCHESTRATOR review diff. ORCHESTRATOR có thể fan-out **2–3 IMPLEMENTER instances** cho các task độc lập trong cùng task graph khi governance mode và project config cho phép. Mỗi instance có branch/worktree riêng và một ownership boundary không giao nhau. ORCHESTRATOR chỉ micro-fix khi thay đổi cục bộ, hiển nhiên, không đổi behavior/contract/architecture/security/business logic và nằm trong giới hạn nhỏ của task. Lớn hơn thì trả IMPLEMENTER.
 
 ## `single-agent`
 
