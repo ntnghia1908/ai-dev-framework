@@ -7,6 +7,7 @@
 - Added bounded task-level fan-out for dual-agent: multiple IMPLEMENTER instances may run concurrently on independent tasks, each with its own branch/worktree; project configuration caps concurrency at 1–3.
 - Added governance configuration and task fields for authorization source, parallel group, dependencies and owned paths; checker validates governance shape and boundary authorization references.
 - Preserved task governance mode for backward-compatible projects that still require per-task approval.
+- FW-CODEX-ORCH-01 (Phase 1B.1, adapter-only, Core v4.4 unchanged): Codex adapter descriptor now lists `orchestrator` and `implementer`; Codex and Claude Code adapter docs describe external Codex ORCHESTRATOR with manual delegation to a Claude Code Sonnet IMPLEMENTER. Codex remains unverified (no pilot) and independent review of this change is pending.
 
 
 ## v4.3 — 2026-10-07
