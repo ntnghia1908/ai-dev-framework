@@ -106,12 +106,15 @@ Optional paths are *permitted but not required*. Avoid touching them unless nece
 
 ## Result
 
-- Main changes: not implemented.
-- Tests: not run for this task.
-- Review: pending.
-- Important findings / decisions: ADR-003 ACCEPTED; FW-ADR003-IMPL-01 APPROVED for implementation within owned paths; documentation-only setup commit/push authorized for Claude handoff.
-- Known limitations: native Codex worker/model and cross-review require separate P2–P6 pilots.
-- PR: not authorized.
+- Status: READY (2026-10-18), uncommitted in working tree on `feat/fw-adr003-native-dual-agent` @ `c4bcd18`.
+- Main changes: template config enables `chatgpt`/`claude-code`/`codex` with `agents.product` only (boundary/3 unchanged); `AGENTS.md` auto-adapt pointer; project-profile §7 native dual-agent preference, write concurrency 1, no-boundary STOP, handoff checks; task template optional `Orchestrator` + `## Handoff`; Codex README native built-in worker first, PR #7 flows labeled optional, nested CLI non-default; local + GitHub bootstrap copy `adapters/codex`; install/upgrade docs; CHANGELOG v4.4 dated entry; tests (`makeProject` `orchestrator: null`, 8 new checker cases, new `tests/bootstrap-project.test.mjs`).
+- Execution: dual-agent — ORCHESTRATOR Claude Code main session (Opus); IMPLEMENTER native Claude Code subagent (Sonnet), single writer. ORCHESTRATOR applied one bounded wording fix (project-profile §7 mid-task handoff).
+- Tests: baseline at `c4bcd18` — in-repo `node --test` 42 tests / 27 pass / 15 fail, exit 1 (pre-existing: `core.autocrlf=true` CRLF checkout makes checker history heading match fail at `scripts/framework-check.mjs:193`); LF-normalized copy 42/42 pass, exit 0. Final — LF-normalized 52/52 pass, 0 skipped, exit 0; in-repo 52 / 31 pass / 21 fail, exit 1 (same CRLF cause: 15 baseline + 6 new fixture tests, all pass under LF). Checker on a fresh bootstrap in a temp empty git repo (3 adapters, product-only binding, boundary/3, 0 FILL markers): exit 0; no `.codex`, `CLAUDE.md` identical to template. GitHub bootstrap verified statically only (not executed).
+- Scope: `git diff --check` clean; changes limited to owned paths (incl. untracked `tests/bootstrap-project.test.mjs`); diff vs base for `core/`, checker, `VERSION`, `templates/CLAUDE.md`, Codex descriptor, `.claude/`, ChatGPT/Copilot adapters empty; no commits after `c4bcd18`.
+- Review: ORCHESTRATOR diff-first review of all tracked + untracked changes against AC1–AC9; verification rerun independently. No blocking findings.
+- Important findings / decisions: ADR-003 ACCEPTED; FW-ADR003-IMPL-01 APPROVED for implementation within owned paths; documentation-only setup commit/push authorized for Claude handoff. Out-of-scope finding: checker's history heading match is not CRLF-tolerant (separate bug, checker not owned here).
+- Known limitations: runtime pilots P2–P7 (Claude/Codex native delegation evidence, cross-review, handoff) not performed; no production readiness claimed. Bootstrap test needs `bash` + `git` (skips otherwise); only exercised with Git Bash on Windows.
+- PR: HUMAN LEAD approved implementation commit/push, PR and merge on 2026-10-18 after READY report.
 
 ## Integration gate
 

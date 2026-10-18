@@ -25,6 +25,10 @@ Entry point cho mọi agent làm việc trong repository này.
 
 Không preload toàn bộ tài liệu. Session mới bootstrap từ repository, không dựa vào transcript chat.
 
+## Native dual-agent (auto-adapt)
+
+CLI đang mở (Claude Code hoặc Codex) tự đề xuất mình là ORCHESTRATOR và giao việc cho subagent native của chính tool đó, chỉ khi: adapter của nó được bật trong `framework.config.json`, hỗ trợ role, không có `agents.orchestrator` cố định mâu thuẫn, và policy của task cho phép. Có binding cố định sang tool khác → dừng, chờ HUMAN LEAD quyết. Chi tiết (mapping native, write concurrency, handoff): `docs/ai/project-profile.md` §7.
+
 ## Invariants
 
 - Repository là source of truth; chat/session không thay thế authority, task contract hoặc source/tests.

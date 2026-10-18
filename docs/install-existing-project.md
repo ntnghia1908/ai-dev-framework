@@ -40,6 +40,12 @@ node scripts/framework-check.mjs
 
 Sau đó làm một task S0 hoặc S1 đầu tiên làm pilot. Không thay đổi code / test trong PR adoption; nếu inventory cho thấy cần sửa code, tách thành task riêng.
 
+## Project đã adopt trước ADR-003: không tự migrate
+
+Default mới của template (ba adapter `chatgpt`, `claude-code`, `codex`; chỉ `agents.product`, không cố định `agents.orchestrator`) chỉ áp dụng cho project **mới**. Project v4.x đã có `framework.config.json`, binding, governance mode và task contract thì giữ nguyên: kit không tự đổi, và các binding cố định (vd `agents.orchestrator = claude-code`) vẫn là authority. Mở CLI khác với binding cố định → dừng chờ HUMAN LEAD, không tự override.
+
+Muốn chuyển sang default mới thì đó là quyết định của HUMAN LEAD (project-wide policy), làm thủ công: chép `adapters/codex`, thêm `codex` vào `adapters`, và chỉ khi chủ ý mới bỏ `agents.orchestrator`; task contract cũ vẫn hợp lệ, không cần sửa. Chạy lại `node scripts/framework-check.mjs` sau thay đổi.
+
 ## Lưu ý
 
 - Adoption là thay đổi project-wide policy: cần HUMAN LEAD duyệt (`core/docs/ai/workflow.md` §1, §3).

@@ -15,6 +15,13 @@ For v4.4, read the boundary-authorization and bounded-parallelism changes in the
 7. Chạy `node scripts/framework-check.mjs`, sửa tới khi exit 0.
 8. Đi qua integration mechanism của project; HUMAN LEAD duyệt (đổi Core là project-wide policy).
 
+## ADR-003: native dual-agent (ranh giới adoption)
+
+- Core v4.4 và `VERSION` **không đổi**; thay đổi ADR-003 nằm ở template, adapter Codex, bootstrap và test, ghi thành entry có ngày dưới v4.4 trong `CHANGELOG.md`.
+- Default mới (ba adapter, không cố định `agents.orchestrator`) chỉ áp dụng cho project mới bootstrap. Nâng kit **không** tự đổi `framework.config.json`, binding, governance mode hay task contract của project đang có; checker v4.4 vẫn chấp nhận cả cấu hình có binding cố định lẫn không binding.
+- Field `Orchestrator` và mục `## Handoff` trong task template là tùy chọn, checker không bắt buộc; task cũ không cần migrate. Muốn áp dụng default mới cho project cũ: quyết định của HUMAN LEAD, xem [`install-existing-project.md`](install-existing-project.md).
+- Native Codex worker, cross-review và handoff giữa CLI chưa có evidence pilot; không coi là đã kiểm chứng.
+
 ## Ghi chú
 
 - Nâng version không tự đổi tài liệu authority của project; chỉ thay Core, adapter, checker và mục template mới.

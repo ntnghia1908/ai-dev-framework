@@ -43,13 +43,19 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
    cp "$KIT/adapters/claude-code/workflows/requirement-to-task.yml" .github/workflows/
    ```
 
-   Copilot / Codex: cài theo adapter tương ứng nếu project cần.
+   Codex ORCHESTRATOR / IMPLEMENTER adapter (descriptor + README; không cần `.codex/`):
+   ```bash
+   mkdir -p adapters/codex
+   cp -a "$KIT/adapters/codex/." adapters/codex/
+   ```
+
+   Copilot: cài theo adapter tương ứng nếu project cần.
 
    Product / Requirement layer đã nằm trong Project Layer:
    - `docs/product/PRODUCT_AGENT.md`
    - `docs/product/requirements/_template.md`
 
-   Chỉ chép adapter bạn dùng, rồi chỉnh `adapters` và `agents` trong `framework.config.json` cho khớp.
+   Template mặc định bật ba adapter `chatgpt`, `claude-code`, `codex` (`scripts/bootstrap-project.sh` và `bootstrap/github/framework-bootstrap.yml` chép đúng bộ này). Nếu bỏ adapter nào, chỉnh `adapters` và `agents` trong `framework.config.json` cho khớp.
 
 4. **Checker**:
 
@@ -69,7 +75,8 @@ Biến `KIT` là đường dẫn tới bản clone của kit; chạy trong root 
 
    - `frameworkVersion`: khớp `Version` trong `docs/ai/workflow.md`.
    - `adapters`: danh sách adapter đã chép vào `adapters/`.
-   - `agents.product` / `agents.orchestrator`: role binding phải trỏ tới adapter enabled và adapter đó phải hỗ trợ role.
+   - `agents.product` / `agents.orchestrator`: role binding phải trỏ tới adapter enabled và adapter đó phải hỗ trợ role. Template chỉ đặt `agents.product = chatgpt`; **không** cố định `agents.orchestrator`, nên CLI đang mở (Claude Code hoặc Codex) tự đề xuất làm ORCHESTRATOR và dùng subagent native của chính nó (native dual-agent là mặc định; `single-agent` vẫn dùng được khi HUMAN LEAD duyệt). Chi tiết: `docs/ai/project-profile.md` §7 và `AGENTS.md`.
+   - `governance`: template để `boundary` / `maxParallelImplementers: 3` (trần cấu hình; số writer đồng thời thực tế là 1 cho tới khi HUMAN LEAD duyệt pilot worktree). `boundary` chưa phải authorization: project mới chưa có boundary được duyệt thì agent **dừng trước khi sửa source** cho tới khi HUMAN LEAD duyệt boundary.
    - `requiredFiles` / `requiredTokens`: file / chuỗi riêng project muốn checker giữ (vd `README.md`, một decision record, một cụm chữ trong project profile). Có thể để trống.
    - `taskDir`, `decisionDir`: thư mục task contract và decision record (mặc định `docs/tasks`, `docs/decisions`; thư mục không tồn tại thì bỏ qua).
 

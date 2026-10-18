@@ -2,12 +2,33 @@
 
 > **CHƯA KIỂM CHỨNG.** Viết theo tài liệu công khai, chưa chạy pilot, cả vai trò IMPLEMENTER lẫn ORCHESTRATOR. Chỉ dùng cho task S1 nhỏ sau khi hoàn tất checklist pilot bên dưới. Tool thay đổi nhanh: kiểm lại nguồn trước khi dùng.
 
+## Mặc định: native dual-agent (built-in worker)
+
+Khi project mở bằng Codex, session chính đề xuất mình là ORCHESTRATOR (chỉ khi adapter `codex` được bật, không có `agents.orchestrator` cố định sang tool khác, và policy task cho phép) và giao việc cho **built-in native worker** của Codex. Không gọi CLI của provider khác; Phase 1 không có `.codex/config.toml` hay `.codex/agents/*.toml` (ADR-003 D2). Worker ban đầu kế thừa model của session chính; không hard-code model ID.
+
+> **Chưa pilot (P3).** Codex built-in worker và model routing chưa được kiểm chứng trên CLI/version của bạn. Chỉ coi là chạy được sau khi có evidence: thread worker (vd `/subagents`), model và version thực tế, permission, và ORCHESTRATOR tự chạy lại verification. Thiếu worker/model/permission → BLOCKED hoặc xin duyệt phương án khác, không tự hạ xuống `single-agent`.
+
+Delegation prompt gọn cho built-in worker (chỉ là prompt, không phải sandbox):
+
+```text
+Dùng built-in worker làm IMPLEMENTER duy nhất cho task <ID>.
+Task contract (APPROVED hoặc trong boundary đã duyệt): docs/tasks/<ID>.md
+Branch: <branch>   Base: <sha>
+Xác minh branch/HEAD/working tree trước khi sửa; lệch thì BLOCKED.
+Chỉ sửa trong Owned paths; không commit, push, tạo PR; không gọi CLI khác.
+Chạy required verification, trả READY report (thay đổi chính, verification + exit code, finding ngoài scope, giới hạn).
+```
+
+ORCHESTRATOR vẫn review độc lập (contract → diff gồm untracked → AC → tự chạy lại verification). Mọi mục bên dưới là **tùy chọn / thay thế**, không phải mặc định.
+
+---
+
 Adapter hỗ trợ hai vai trò (descriptor `adapter.json`: `orchestrator`, `implementer`). Descriptor chỉ khai capability fact, không cấp authorization; authority nằm ở workflow, project policy và task contract.
 
-- **IMPLEMENTER** (mục "Cách chạy" và "Mẫu delegation prompt"): thực hiện vai trò IMPLEMENTER của profile `dual-agent` (`core/docs/ai/execution-profiles.md`) bằng Codex CLI chạy **local** trong worktree của task. ORCHESTRATOR (agent khác) vẫn review diff.
-- **ORCHESTRATOR** (mục "Vai trò ORCHESTRATOR"): Codex điều phối và review; IMPLEMENTER là agent khác (tài liệu hóa cho Claude Code Sonnet).
+- **IMPLEMENTER** (tùy chọn, `codex exec`; mục "Cách chạy" và "Mẫu delegation prompt"): thực hiện vai trò IMPLEMENTER của profile `dual-agent` (`core/docs/ai/execution-profiles.md`) bằng Codex CLI chạy **local** trong worktree của task. ORCHESTRATOR (agent khác) vẫn review diff.
+- **ORCHESTRATOR** (tùy chọn, handoff thủ công sang Claude Code; mục "Vai trò ORCHESTRATOR"): Codex điều phối và review; IMPLEMENTER là agent khác (tài liệu hóa cho Claude Code Sonnet). Gọi `claude -p` lồng từ Codex (hoặc ngược lại) là route thử nghiệm, **không mặc định** và ADR-003 không đưa vào production.
 
-## Vai trò ORCHESTRATOR
+## Vai trò ORCHESTRATOR (tùy chọn: handoff thủ công sang Claude Code)
 
 Codex làm ORCHESTRATOR của profile `dual-agent` (`core/docs/ai/execution-profiles.md`); contract vai trò ở `core/docs/ai/agent-adapter-contract.md`. Chưa pilot, nên HUMAN LEAD vẫn là gate cho mọi decision gate.
 
@@ -38,7 +59,9 @@ Chạy required verification và dừng ở READY report: thay đổi chính, ve
 (lệnh + exit code + kết quả), finding ngoài scope, giới hạn.
 ```
 
-### Project config mẫu (adopted project)
+### Project config mẫu (tùy chọn: binding cố định, adopted project)
+
+Chỉ dùng khi HUMAN LEAD chủ ý ràng buộc cố định ORCHESTRATOR; project mới từ kit không đặt `agents.orchestrator`.
 
 ```json
 {
@@ -66,7 +89,7 @@ Starter-kit root (repo kit) **không** phải adopted project: không có `AGENT
 
 Phần này áp dụng cho vai trò IMPLEMENTER; ORCHESTRATOR xem mục trên. Không cần file adapter riêng: Codex đọc `AGENTS.md` (đã luôn bắt buộc). Thêm `"codex"` vào `adapters` trong `framework.config.json` và khai adapter trong Danh sách IMPLEMENTER (`docs/ai/project-profile.md` §7).
 
-## Cách chạy (hướng local)
+## Cách chạy (tùy chọn: `codex exec` làm IMPLEMENTER)
 
 1. ORCHESTRATOR tạo worktree / branch, viết task contract (`Implementer: codex — <lý do>`, `Implementation authorized: YES`).
 2. Chạy `codex exec` trong worktree với delegation prompt (mẫu dưới). Yêu cầu khi chọn cờ (cần xác minh cờ cụ thể): được ghi file trong worktree; không commit / push / tạo PR; không truy cập mạng nếu task không cần.

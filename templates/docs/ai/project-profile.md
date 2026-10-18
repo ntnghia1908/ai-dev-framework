@@ -51,6 +51,14 @@ Chỉ tạo `<module>/AGENTS.md` khi module có convention riêng đủ rõ. -->
 
 Project chọn `task` (cần APPROVE TASK) hoặc `boundary` (HUMAN LEAD cấp Implementation Authorization Boundary một lần). Ghi lựa chọn trong `framework.config.json` và không tự đổi giữa phiên.
 
+### Execution profile ưu tiên: native dual-agent
+
+- Ưu tiên `dual-agent` với subagent **native của cùng tool** đang mở; `single-agent` vẫn dùng được khi HUMAN LEAD duyệt cho task. Profile của task đã duyệt không đổi chỉ vì mở CLI khác; native delegation không khả dụng thì xin duyệt phương án khác, không tự hạ profile.
+- Mapping: Claude Code main session (ORCHESTRATOR) → subagent `implementer`; Codex main session (ORCHESTRATOR) → built-in native worker. Không hard-code model ID; model thực tế do runtime/user quyết và phải ghi nhận khi pilot (xem README adapter).
+- `governance.maxParallelImplementers` (tối đa 3) chỉ là **trần cấu hình**. Số writer đồng thời thực tế là **1** cho tới khi HUMAN LEAD duyệt riêng một pilot worktree (mỗi IMPLEMENTER một branch/worktree, ownership không giao nhau, dependency thỏa, verification độc lập — `docs/ai/workflow.md` §5). Subagent dùng chung quyền của process cha; thread riêng không phải worktree.
+- `boundary` mode là chế độ governance, không phải authorization: project mới **chưa có boundary được duyệt** nên phải DỪNG, không sửa source project cho tới khi HUMAN LEAD định nghĩa và duyệt boundary (hoặc duyệt task theo `task` mode).
+- Handoff: đổi CLI giữa các task độc lập dùng bootstrap repository + authorization của task mới. Đổi giữa chừng một task cần HUMAN LEAD duyệt rõ; handoff prompt theo `docs/ai/workflow.md` §9. Trước khi nhận: kiểm boundary/task, branch/base/HEAD, `git status --short --untracked-files=all`, `git worktree list` và xác nhận session cũ đã dừng; writer mơ hồ → STOP/BLOCKED.
+
 ### Danh sách IMPLEMENTER
 
 Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-agent`; HUMAN LEAD duyệt danh sách adapter được phép. Tên model / vendor chỉ ghi ở đây và ở adapter, không ghi vào Core.
