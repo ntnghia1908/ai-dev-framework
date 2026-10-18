@@ -17,7 +17,7 @@ function copyDir(src, dest) {
 }
 
 // Build a minimal valid project from core/ + templates/ + adapters, FILL markers replaced.
-function makeProject({ adapters = ['claude-code'] } = {}) {
+function makeProject({ adapters = ['claude-code'], orchestrator } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fwkit-'));
   created.push(dir);
   copyDir(path.join(KIT, 'core'), dir);
@@ -43,6 +43,7 @@ function makeProject({ adapters = ['claude-code'] } = {}) {
   cfg.agents = {};
   if (adapters.includes('chatgpt')) cfg.agents.product = 'chatgpt';
   if (adapters.includes('claude-code')) cfg.agents.orchestrator = 'claude-code';
+  if (orchestrator) cfg.agents.orchestrator = orchestrator;
   fs.writeFileSync(path.join(dir, 'framework.config.json'), JSON.stringify(cfg, null, 2));
   return dir;
 }
@@ -153,7 +154,7 @@ test('current-state wrong Status fails', () => {
 test('Version not in history fails', () => {
   const dir = makeProject();
   edit(dir, 'docs/ai/framework-history.md', (s) => s.replace('## v4.4', '## v4.2'));
-  expectFail(dir, /framework-history\.md missing entry for workflow Version 4\.3/);
+  expectFail(dir, /framework-history\.md missing entry for workflow Version 4\.4/);
 });
 
 test('Version differs from config fails', () => {
@@ -284,10 +285,23 @@ test('role binding to disabled adapter fails', () => {
   expectFail(dir, /agents\.orchestrator references disabled adapter: chatgpt/);
 });
 
+test('codex orchestrator binding passes and keeps implementer role', () => {
+  const dir = makeProject({ adapters: ['codex', 'claude-code'], orchestrator: 'codex' });
+  const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
+  assert.equal(cfg.agents.orchestrator, 'codex');
+  const desc = JSON.parse(fs.readFileSync(path.join(dir, 'adapters/codex/adapter.json'), 'utf8'));
+  assert.deepEqual(desc.roles, ['orchestrator', 'implementer']);
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask.replace('- Implementer: claude-code', '- Implementer: codex'));
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+  assert.match(out, /PASS: adapter descriptor adapters\/codex\/adapter\.json/);
+  assert.match(out, /PASS: task contract docs\/tasks\/T1\.md/);
+});
+
 test('role binding to unsupported adapter role fails', () => {
-  const dir = makeProject({ adapters: ['claude-code', 'codex'] });
-  edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "codex"'));
-  expectFail(dir, /agents\.orchestrator adapter codex does not support role orchestrator/);
+  const dir = makeProject({ adapters: ['claude-code', 'copilot'] });
+  edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "copilot"'));
+  expectFail(dir, /agents\.orchestrator adapter copilot does not support role orchestrator/);
 });
 
 test('invalid adapter descriptor fails', () => {

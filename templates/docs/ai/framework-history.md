@@ -21,6 +21,13 @@ File này chỉ ghi lịch sử; rule hiện hành nằm ở canonical owner c�
 - Decision: HUMAN LEAD 2026-10-08.
 - Task: TASK-002-boundary-authorization-parallel.
 
+### FW-CODEX-ORCH-01 (Phase 1B.1)
+
+- Thay đổi: adapter Codex khai thêm role `orchestrator` (giữ `implementer`); README adapter Codex và Claude Code, cùng execution rule, mô tả Codex ORCHESTRATOR giao thủ công cho Claude Code Sonnet IMPLEMENTER. Thêm test binding `agents.orchestrator = codex`; sửa kỳ vọng test lịch sử từ 4.3 sang 4.4. Chỉ đổi adapter / test; Framework Core v4.4 không đổi.
+- Lý do: cho phép Codex điều phối và review mà không đổi Core; thay đổi nhỏ ở adapter nên ghi dưới version hiện tại.
+- Trạng thái: chưa pilot; independent review pending.
+- Task: FW-CODEX-ORCH-01 (`docs/tasks/FW-CODEX-ORCH-01.md`).
+
 ## v4.3
 
 - Agent Adapter Architecture v1: provider-neutral role contracts, machine-readable adapter descriptors, project role bindings and task-level IMPLEMENTER selection.
