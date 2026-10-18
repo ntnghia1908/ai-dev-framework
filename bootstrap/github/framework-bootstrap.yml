@@ -38,9 +38,10 @@ jobs:
           cp "$framework/scripts/framework-check.mjs" scripts/
           cp "$framework/scripts/product-check.mjs" scripts/
 
-          mkdir -p .claude .github/workflows adapters/chatgpt adapters/claude-code
+          mkdir -p .claude .github/workflows adapters/chatgpt adapters/claude-code adapters/codex
           cp -a "$framework/adapters/chatgpt/." adapters/chatgpt/
           cp -a "$framework/adapters/claude-code/." adapters/claude-code/
+          cp -a "$framework/adapters/codex/." adapters/codex/
           cp -a "$framework/adapters/claude-code/.claude/." .claude/
 
           # GitHub Actions' built-in GITHUB_TOKEN cannot push workflow files.

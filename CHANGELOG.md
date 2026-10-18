@@ -2,6 +2,8 @@
 
 ## v4.4 — 2026-10-08
 
+- 2026-10-18 — FW-ADR003-IMPL-01 (ADR-003, kit/template/adapter only; Core v4.4, checker, descriptor schema and `VERSION` unchanged): new-project template now enables `chatgpt`, `claude-code` and `codex` and binds only `agents.product` (no fixed `agents.orchestrator`; `boundary`/3 unchanged); local and GitHub bootstrap install the Codex adapter descriptor and README (no `.codex/*.toml`); `AGENTS.md`, project-profile §7, task template (optional `Orchestrator` field and `## Handoff`) and Codex README describe native dual-agent as the default, with write concurrency 1 until a separate worktree pilot, and the PR #7 flows as optional; install/upgrade docs state that existing projects are not migrated; tests cover no-binding, legacy-binding and bootstrap cases. Runtime pilots (Claude/Codex native delegation, cross-review, handoff) are not done; this entry claims configuration, documentation and test readiness only.
+
 - Added boundary authorization mode: a HUMAN LEAD-approved implementation boundary can authorize the ORCHESTRATOR to create and execute task contracts inside that boundary without a separate per-task approval gate.
 - Kept decision gates mandatory: scope, architecture, dependency, security model, public API, breaking change, significant shared abstraction, project-wide policy/convention and database/schema still require HUMAN LEAD decisions.
 - Added bounded task-level fan-out for dual-agent: multiple IMPLEMENTER instances may run concurrently on independent tasks, each with its own branch/worktree; project configuration caps concurrency at 1–3.

@@ -17,6 +17,8 @@ function copyDir(src, dest) {
 }
 
 // Build a minimal valid project from core/ + templates/ + adapters, FILL markers replaced.
+// orchestrator: undefined keeps the legacy auto-binding (claude-code when enabled);
+// null requests NO agents.orchestrator binding; a string sets that binding explicitly.
 function makeProject({ adapters = ['claude-code'], orchestrator } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fwkit-'));
   created.push(dir);
@@ -43,7 +45,8 @@ function makeProject({ adapters = ['claude-code'], orchestrator } = {}) {
   cfg.agents = {};
   if (adapters.includes('chatgpt')) cfg.agents.product = 'chatgpt';
   if (adapters.includes('claude-code')) cfg.agents.orchestrator = 'claude-code';
-  if (orchestrator) cfg.agents.orchestrator = orchestrator;
+  if (orchestrator === null) delete cfg.agents.orchestrator;
+  else if (orchestrator) cfg.agents.orchestrator = orchestrator;
   fs.writeFileSync(path.join(dir, 'framework.config.json'), JSON.stringify(cfg, null, 2));
   return dir;
 }
@@ -283,6 +286,87 @@ test('role binding to disabled adapter fails', () => {
   const dir = makeProject();
   edit(dir, 'framework.config.json', (s) => s.replace('"orchestrator": "claude-code"', '"orchestrator": "chatgpt"'));
   expectFail(dir, /agents\.orchestrator references disabled adapter: chatgpt/);
+});
+
+test('template config has ADR-003 new-project defaults', () => {
+  const cfg = JSON.parse(fs.readFileSync(path.join(KIT, 'templates', 'framework.config.json'), 'utf8'));
+  assert.equal(cfg.frameworkVersion, '4.4');
+  assert.deepEqual(cfg.adapters, ['chatgpt', 'claude-code', 'codex']);
+  assert.deepEqual(cfg.agents, { product: 'chatgpt' });
+  assert.deepEqual(cfg.governance, { taskAuthorization: 'boundary', maxParallelImplementers: 3 });
+  assert.deepEqual(cfg.requiredFiles, []);
+  assert.deepEqual(cfg.requiredTokens, {});
+  assert.equal(cfg.taskDir, 'docs/tasks');
+  assert.equal(cfg.decisionDir, 'docs/decisions');
+});
+
+test('new-project default: three adapters, product-only binding, boundary/3 passes', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code', 'codex'], orchestrator: null });
+  const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
+  assert.deepEqual(cfg.adapters, ['chatgpt', 'claude-code', 'codex']);
+  assert.deepEqual(cfg.agents, { product: 'chatgpt' });
+  assert.equal('orchestrator' in cfg.agents, false);
+  assert.deepEqual(cfg.governance, { taskAuthorization: 'boundary', maxParallelImplementers: 3 });
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask);
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+  assert.doesNotMatch(out, /unfilled template marker/);
+  assert.match(out, /PASS: adapter descriptor adapters\/codex\/adapter\.json/);
+});
+
+test('no-binding fixture does not auto-insert a Claude orchestrator', () => {
+  const dir = makeProject({ adapters: ['claude-code'], orchestrator: null });
+  const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
+  assert.deepEqual(cfg.agents, {});
+  assert.equal(run(dir).code, 0);
+});
+
+test('legacy fixed claude-code binding with task governance passes unchanged', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code'], orchestrator: 'claude-code' });
+  edit(dir, 'framework.config.json', s => s.replace('"taskAuthorization": "boundary"', '"taskAuthorization": "task"'));
+  const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
+  assert.equal(cfg.agents.orchestrator, 'claude-code');
+  assert.equal(cfg.governance.taskAuthorization, 'task');
+  const task = validTask
+    .replace('- Status: IN_PROGRESS', '- Status: APPROVED')
+    .replace('- Authorization mode: boundary', '- Authorization mode: task')
+    .replace('- Authorization source: ADR-TEST / Architecture Approval', '- Authorization source: APPROVED TASK');
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+  assert.match(out, /PASS: task contract docs\/tasks\/T1\.md/);
+});
+
+test('legacy fixed claude-code binding with boundary/3 passes unchanged', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code'], orchestrator: 'claude-code' });
+  const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'framework.config.json'), 'utf8'));
+  assert.equal(cfg.agents.orchestrator, 'claude-code');
+  assert.deepEqual(cfg.governance, { taskAuthorization: 'boundary', maxParallelImplementers: 3 });
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), validTask);
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+});
+
+test('optional Orchestrator field and Handoff section in a task are accepted', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code', 'codex'], orchestrator: null });
+  const task = validTask.replace('- Implementer: claude-code', '- Orchestrator: codex\n- Implementer: codex')
+    + '\n## Handoff\n\n- Outgoing / incoming ORCHESTRATOR: codex / claude-code\n';
+  fs.writeFileSync(path.join(dir, 'docs/tasks/T1.md'), task);
+  const { code, out } = run(dir);
+  assert.equal(code, 0, out);
+});
+
+test('no-binding project: role binding to an adapter lacking the role still fails', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code', 'codex', 'copilot'], orchestrator: null });
+  assert.equal(run(dir).code, 0);
+  edit(dir, 'framework.config.json', s => s.replace('"product": "chatgpt"', '"product": "chatgpt", "orchestrator": "copilot"'));
+  expectFail(dir, /agents\.orchestrator adapter copilot does not support role orchestrator/);
+});
+
+test('no-binding project: binding to a disabled adapter fails', () => {
+  const dir = makeProject({ adapters: ['chatgpt', 'claude-code'], orchestrator: null });
+  edit(dir, 'framework.config.json', s => s.replace('"product": "chatgpt"', '"product": "chatgpt", "orchestrator": "codex"'));
+  expectFail(dir, /agents\.orchestrator references disabled adapter: codex/);
 });
 
 test('codex orchestrator binding passes and keeps implementer role', () => {
