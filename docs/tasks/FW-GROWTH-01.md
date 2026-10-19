@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: IN_PROGRESS
+- Status: READY
 - Type: CHANGE
 - Change class: S2
 - Owner: HUMAN LEAD
@@ -88,7 +88,7 @@ Không chạm database, security model hay public API contract.
 - Main changes: §4 "Code bị thay / xóa"; §5 "Tái dùng trước khi viết"; §7 nội dung READY report + review + đo; template thêm 2 mục + 3 field Result; pointer trong `execution.md`, `implementer.md`, 3 mẫu prompt của `adapters/codex/README.md`; CHANGELOG + framework-history.
 - Tests:
   - Thêm `code growth rules have workflow owners and adapter/template pointers`.
-  - `node --test tests/*.test.mjs`: chưa chạy trong phiên cloud, vì auto mode chặn chạy code của repo vừa clone. Phải chạy trước READY.
+  - `node --test tests/*.test.mjs` PASS 56/56 (baseline 55 + 1 test mới), chạy 2026-10-19 sau khi HUMAN LEAD cho phép.
 - Diff + / − (app, test): chỉ tài liệu; test +18 / −0.
 - Helper mới: không có.
 - Review: tự review single-agent (diff → AC).
