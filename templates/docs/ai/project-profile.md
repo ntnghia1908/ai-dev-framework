@@ -69,7 +69,7 @@ Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-
 |---|---|---|---|---|
 | `claude-code` (subagent `implementer`) | tích hợp sẵn với ORCHESTRATOR, không cần CLI riêng | tốn hạn mức của session chính | task cần ngữ cảnh dài | `copilot` |
 | `copilot` (CLI, `--agent implementer`) | chạy nhanh, chi phí thấp cho việc nhỏ | hạn mức gói; allowlist lệnh phải cấu hình | task nhỏ, ít rủi ro, file rõ ràng | `claude-code` |
-| `codex` (`codex exec`) | vendor khác → review chéo | cần gói / API key; chưa kiểm chứng | task cần cách nhìn độc lập | `claude-code` |
+| `codex` (`codex exec`) | dùng hạn mức gói Codex thay ORCHESTRATOR; vendor khác → review chéo (`codex exec review`) | cửa sổ quota ngắn; sandbox không mạng / loopback (ORCHESTRATOR chạy test web + full suite); Linux cần bubblewrap + AppArmor userns | task tự chứa, spec rõ; reviewer thứ hai | `claude-code` |
 -->
 
 | Adapter | Điểm mạnh | Giới hạn | Dùng khi | Dự phòng |
