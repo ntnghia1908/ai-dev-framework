@@ -19,6 +19,8 @@ Adapter riêng cho Claude Code. Shared workflow nằm ở `AGENTS.md` và `docs/
 
 Task `dual-agent` do Claude làm ORCHESTRATOR: ORCHESTRATOR chọn IMPLEMENTER theo Danh sách IMPLEMENTER ở `docs/ai/project-profile.md` §7 lúc viết contract và ghi vào field `Implementer`. Gọi adapter tương ứng: subagent `implementer` (Claude Code), hoặc CLI của adapter khác theo README của adapter đó (`adapters/<tool>/README.md` trong kit). Chỉ gọi IMPLEMENTER ghi trong contract.
 
+Codex CLI làm IMPLEMENTER: theo `adapters/codex/README.md` mục "Cách chạy" (kiểm quota trước, `-s workspace-write`, effort đặt rõ); test web / full suite và chạy dịch vụ thật do ORCHESTRATOR chạy ngoài sandbox.
+
 ## Delegation
 
 Áp dụng khi Claude là ORCHESTRATOR; khi là IMPLEMENTER cho Codex thì không delegate tiếp. Giao task cho implementer kèm task contract, base commit, `Implementation authorized: YES` và plan ngắn.
