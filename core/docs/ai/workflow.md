@@ -56,6 +56,8 @@ Không dùng cập nhật tài liệu để tạo decision mới.
 
 Task là một lát cắt dọc vừa phải: behavior rõ, test và review độc lập. Một lát cắt có một owner chính. Task S1/S2 bắt buộc có `Type`, `Change class`, `Owner`, `Execution profile`, Goal, Scope in/out, Acceptance Criteria, Required verification và authority/reference khi cần. Task trong **boundary-authorized mode** thêm `Authorization source` và được gán vào một `Parallel group` nếu chạy song song.
 
+Contract có mục **Phải giữ nguyên**: liệt kê hành vi / action hiện có cần giữ để giảm vòng sửa sau review.
+
 Lifecycle phụ thuộc governance mode của project:
 
 - `task-approved`: `DRAFT → APPROVED → IN_PROGRESS → READY`.
@@ -86,6 +88,10 @@ Sau authorization:
 ```text
 TASK GRAPH → IMPLEMENT + REQUIRED VERIFICATION → REVIEW → FIX / RETEST / VERIFY → READY → INTEGRATION
 ```
+
+IMPLEMENTER không chờ một lệnh lâu hơn thời hạn cache của subagent (Claude Code: **5 phút**). Verification dài (full suite, render, chạy thật) do ORCHESTRATOR chạy; contract ghi rõ phần verification mỗi bên phụ trách.
+
+Chọn IMPLEMENTER theo **chi phí trên mỗi task merge**; ưu tiên adapter không tiêu quota của ORCHESTRATOR khi adapter đó còn quota.
 
 ### Bounded parallel IMPLEMENTER
 
@@ -147,4 +153,14 @@ Mỗi session có một **session scope**: một checkpoint/task hoặc một ph
 
 Session kết thúc khi scope đạt READY/DONE, dừng ở gate chờ HUMAN LEAD, hoặc context đã dài tới mức ảnh hưởng chất lượng. Khi scope đã xong, không mở scope mới trong session cũ; đề xuất session mới thay vì kéo dài.
 
+Handoff khi context đạt ngưỡng mặc định **250k token**; project có thể cấu hình ngưỡng trong `docs/ai/project-profile.md`. Không resume phiên dài sau khi prompt cache hết hạn (Claude Code main session: **1 giờ**); mở phiên mới từ repository + handoff prompt.
+
 Trước khi đề xuất đóng session, state phải nằm trong repository. Agent đề xuất đóng session và đưa **handoff prompt** ngắn (≤ ~10 dòng) gồm: mục tiêu session sau; bootstrap từ repository, không dựa transcript; trạng thái/gate hiện tại; việc đầu tiên cần làm. Handoff prompt không thay repository làm source of truth.
+
+## 10. Ngân sách context
+
+Giữ nhỏ các file nạp mỗi phiên: `AGENTS.md`, rules adapter và `docs/workflow/current-state.md`. Quy trình lặp lại đưa vào skill / doc đọc khi cần; current-state giữ **≤ ~1,5k token**.
+
+Tra cứu bằng grep / script nhỏ; không nạp tài liệu lớn để lấy một chi tiết.
+
+Đo định kỳ bằng `scripts/token-audit.py` (`--help` để xem bộ lọc dự án, repository và kỳ đo); chỉ số chính là **cost per merged task**. Script dùng merge commit làm đại diện cho PR merge, quy đổi chi phí API để so sánh trước/sau; project dùng squash/rebase cần đối chiếu số task merge từ nguồn integration.
