@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: DRAFT
+- Status: APPROVED
 - Type: CHANGE
 - Change class: S2
 - Owner: HUMAN LEAD
@@ -11,7 +11,7 @@
 - Orchestrator: claude-code
 - Implementer: codex — thay đổi tài liệu / script độc lập, không tốn quota Claude
 - Authorization mode: task
-- Authorization source: HUMAN LEAD duyệt nội dung trong phiên đo token 2026-10-19 (youtube-auto-short); cần duyệt contract trước khi làm
+- Authorization source: HUMAN LEAD duyệt nội dung trong phiên đo token 2026-10-19 (youtube-auto-short); HUMAN LEAD duyệt contract 2026-10-19 (kèm base commit, canonical owner, token-audit không mặc định theo dự án)
 - Parallel group: —
 - Owned paths:
   - `core/docs/ai/workflow.md`
@@ -24,9 +24,9 @@
   - `templates/docs/ai/framework-history.md`
   - `docs/tasks/FW-TOKEN-01.md`
 - Dependencies: none
-- Base commit / branch: <main HEAD lúc bắt đầu> / docs/token-efficiency-rules
-- Human Lead approval: pending
-- Implementation authorized: NO
+- Base commit / branch: 8645b98 / docs/token-efficiency-rules
+- Human Lead approval: APPROVED 2026-10-19
+- Implementation authorized: YES
 
 ## Goal
 
@@ -44,13 +44,13 @@ Framework có quy tắc tiết kiệm token đo được, áp dụng cho mọi d
 ## Scope
 
 - In scope (quy tắc, mỗi rule một canonical owner):
-  1. `workflow.md` §9: ngưỡng context để handoff (mặc định 250k, cấu hình được); không resume phiên dài sau khi cache hết hạn — mở phiên mới từ repository + handoff.
-  2. `workflow.md`: IMPLEMENTER không chờ một lệnh quá thời hạn cache của subagent (Claude Code: 5 phút); verification dài (full suite, render, chạy thật) do ORCHESTRATOR chạy.
-  3. `workflow.md`: chọn IMPLEMENTER theo chi phí trên mỗi task merge; ưu tiên adapter không tiêu quota của ORCHESTRATOR khi còn quota.
-  4. `workflow.md` §4: contract có mục "Phải giữ nguyên" (hành vi / action hiện có) để giảm vòng sửa sau review.
-  5. Ngân sách file nạp mỗi phiên: AGENTS.md + rules + current-state; quy trình lặp lại đưa vào skill / doc đọc khi cần; current-state ≤ ~1,5k token.
-  6. Agent tra cứu bằng grep / script nhỏ, không nạp tài liệu lớn để lấy một chi tiết.
-  7. `scripts/token-audit.py` trong kit + hướng dẫn đo định kỳ (cost per merged task).
+  1. `workflow.md` §9 (owner): ngưỡng context để handoff (mặc định 250k, cấu hình được); không resume phiên dài sau khi cache hết hạn — mở phiên mới từ repository + handoff.
+  2. `workflow.md` §5 (owner): IMPLEMENTER không chờ một lệnh quá thời hạn cache của subagent (Claude Code: 5 phút); verification dài (full suite, render, chạy thật) do ORCHESTRATOR chạy.
+  3. `workflow.md` §5 (owner): chọn IMPLEMENTER theo chi phí trên mỗi task merge; ưu tiên adapter không tiêu quota của ORCHESTRATOR khi còn quota.
+  4. `workflow.md` §4 (owner): contract có mục "Phải giữ nguyên" (hành vi / action hiện có) để giảm vòng sửa sau review.
+  5. `workflow.md` §10 mới "Ngân sách context" (owner): ngân sách file nạp mỗi phiên: AGENTS.md + rules + current-state; quy trình lặp lại đưa vào skill / doc đọc khi cần; current-state ≤ ~1,5k token.
+  6. `workflow.md` §10 (owner): agent tra cứu bằng grep / script nhỏ, không nạp tài liệu lớn để lấy một chi tiết.
+  7. `scripts/token-audit.py` trong kit + hướng dẫn đo định kỳ (cost per merged task); không có giá trị mặc định riêng của dự án nào (`--project`, `--repo` do người chạy truyền vào).
 - Out of scope: cấu hình Claude Code cá nhân; hook lọc output; đổi effort mặc định.
 
 ## Acceptance Criteria
