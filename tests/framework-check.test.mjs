@@ -473,6 +473,24 @@ test('token rules have workflow owners and adapter/template pointers', () => {
   assert.match(state, /Ngân sách token.*docs\/ai\/workflow\.md` §10/);
 });
 
+test('code growth rules have workflow owners and adapter/template pointers', () => {
+  const workflow = fs.readFileSync(path.join(KIT, 'core/docs/ai/workflow.md'), 'utf8');
+  const section = n => workflow.split(new RegExp(`^## ${n}\\. `, 'm'))[1]?.split(/^## /m)[0] ?? '';
+  assert.match(section(4), /Code bị thay \/ xóa/);
+  assert.match(section(5), /Tái dùng trước khi viết/);
+  for (const token of ['AC → test', '3 hàm test / AC', 'parametrize', 'thêm / xóa', 'không thêm dependency']) {
+    assert.ok(section(7).includes(token), `§7 missing ${token}`);
+  }
+  const template = fs.readFileSync(path.join(KIT, 'templates/docs/tasks/_template.md'), 'utf8');
+  for (const heading of ['## Phải giữ nguyên', '## Code bị thay / xóa']) assert.ok(template.includes(heading), `template missing ${heading}`);
+  assert.match(template, /AC → test, docs\/ai\/workflow\.md §7/);
+  for (const rel of ['adapters/claude-code/.claude/agents/implementer.md', 'adapters/claude-code/.claude/rules/execution.md', 'adapters/codex/README.md']) {
+    const text = fs.readFileSync(path.join(KIT, rel), 'utf8');
+    assert.match(text, /docs\/ai\/workflow\.md`? §5/, `${rel} missing §5 pointer`);
+    assert.match(text, /AC → test/, `${rel} missing AC → test`);
+  }
+});
+
 test('token audit help works and project/repo must be explicit without reading transcripts', () => {
   const script = path.join(KIT, 'scripts/token-audit.py');
   const help = spawnSync('python3', [script, '--help'], { encoding: 'utf8' });
