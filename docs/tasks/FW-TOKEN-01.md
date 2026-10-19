@@ -80,4 +80,4 @@ Không chạm database, security model hay public API contract.
 - AC4: `python3 scripts/token-audit.py --since 2026-09-26 --until 2026-10-19 --project youtube-auto-short --repo ~/projects/youtube-auto-short` trên transcript thật: $790,77; subagent 42 %; main input > 250k 24,3 %; cold resume main 46 (9,0M), subagent 205 (32,7M); 106 merge → $7,46/PR; Codex 50,7M token. Chênh nhỏ so với Bằng chứng do chuỗi lọc dự án hẹp hơn.
 - Review vòng 1: Codex lọc theo `cwd` dưới `--repo` → 0 token (worktree anh em, repo đã chuyển thư mục). Sửa: lọc `cwd` theo `--project`, `--repo` chỉ đếm merge; thêm test. Resume không giữ `-C` nên Codex trả patch, ORCHESTRATOR áp dụng.
 - Follow-up ngoài Owned paths: thêm mục "Phải giữ nguyên" vào `templates/docs/tasks/_template.md`.
-- PR:
+- PR: #10
