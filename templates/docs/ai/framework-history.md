@@ -21,6 +21,12 @@ File này chỉ ghi lịch sử; rule hiện hành nằm ở canonical owner c�
 - Decision: HUMAN LEAD 2026-10-08.
 - Task: TASK-002-boundary-authorization-parallel.
 
+### FW-TOKEN-01 — 2026-10-19
+
+- Thay đổi: bổ sung quy tắc tiết kiệm token tại `docs/ai/workflow.md` §4/§5/§9/§10; adapter / current-state dẫn chiếu owner; thêm `scripts/token-audit.py` để đo cost per merged task, không mặc định theo dự án.
+- Lý do: giảm context nạp lại và vòng sửa sau review; đo transcript thật do ORCHESTRATOR xác nhận (AC4).
+- Task: FW-TOKEN-01 (`docs/tasks/FW-TOKEN-01.md`); PR/commit: chờ integration.
+
 ### FW-CODEX-ORCH-01 (Phase 1B.1)
 
 - Thay đổi: adapter Codex khai thêm role `orchestrator` (giữ `implementer`); README adapter Codex và Claude Code, cùng execution rule, mô tả Codex ORCHESTRATOR giao thủ công cho Claude Code Sonnet IMPLEMENTER. Thêm test binding `agents.orchestrator = codex`; sửa kỳ vọng test lịch sử từ 4.3 sang 4.4. Chỉ đổi adapter / test; Framework Core v4.4 không đổi.

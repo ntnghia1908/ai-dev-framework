@@ -451,3 +451,97 @@ test('adoption record missing section fails', () => {
   edit(dir, 'FRAMEWORK_ADOPTION.md', (s) => s.replace('## Not adopted', '## Skipped'));
   expectFail(dir, /FRAMEWORK_ADOPTION\.md missing section: Not adopted/);
 });
+
+test('token rules have workflow owners and adapter/template pointers', () => {
+  const workflow = fs.readFileSync(path.join(KIT, 'core/docs/ai/workflow.md'), 'utf8');
+  const section = n => workflow.split(new RegExp(`^## ${n}\\. `, 'm'))[1]?.split(/^## /m)[0] ?? '';
+  assert.match(section(4), /Phải giữ nguyên/);
+  assert.match(section(5), /5 phút/);
+  assert.match(section(5), /chi phí trên mỗi task merge/);
+  assert.match(section(9), /250k token/);
+  assert.match(section(9), /project-profile\.md/);
+  assert.match(section(9), /Không resume[\s\S]*1 giờ/);
+  assert.match(section(10), /^Ngân sách context/);
+  for (const token of ['AGENTS.md', 'rules adapter', '1,5k token', 'grep / script nhỏ', 'scripts/token-audit.py', 'cost per merged task']) {
+    assert.ok(section(10).includes(token), `§10 missing ${token}`);
+  }
+  for (const rel of ['agents/implementer.md', 'rules/execution.md']) {
+    const adapter = fs.readFileSync(path.join(KIT, 'adapters/claude-code/.claude', rel), 'utf8');
+    assert.match(adapter, /docs\/ai\/workflow\.md`? §5 \(Claude Code subagent: (?:\*\*)?5 phút/);
+  }
+  const state = fs.readFileSync(path.join(KIT, 'templates/docs/workflow/current-state.md'), 'utf8');
+  assert.match(state, /Ngân sách token.*docs\/ai\/workflow\.md` §10/);
+});
+
+test('token audit help works and project/repo must be explicit without reading transcripts', () => {
+  const script = path.join(KIT, 'scripts/token-audit.py');
+  const help = spawnSync('python3', [script, '--help'], { encoding: 'utf8' });
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /--project/);
+  assert.match(help.stdout, /--repo/);
+  assert.match(help.stdout, /no default/);
+  assert.match(help.stdout, /workflow\.md §10/);
+  const missing = spawnSync('python3', [script], { encoding: 'utf8' });
+  assert.equal(missing.status, 2, missing.stderr);
+  assert.match(missing.stderr, /required: --project, --repo/);
+});
+
+test('token audit counts cold gaps, deduplicates streams and filters synthetic transcripts', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fwkit-token-'));
+  created.push(dir);
+  const repo = path.join(dir, 'repo');
+  fs.mkdirSync(repo);
+  const env = { ...process.env, HOME: dir };
+
+  const writeLog = (rel, records) => {
+    const file = path.join(dir, rel);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, records.map(r => JSON.stringify(r)).join('\n') + '\n');
+  };
+  const turn = (id, timestamp, written, output = 10) => ({ type: 'assistant', timestamp,
+    message: { id, model: 'claude-sonnet-test', usage: { input_tokens: 0, cache_creation_input_tokens: written,
+      cache_read_input_tokens: 0, output_tokens: output } } });
+  writeLog('.claude/projects/fixture/main.jsonl', [
+    turn('before', '2026-10-18T23:00:00Z', 100000),
+    turn('m1', '2026-10-19T00:00:01Z', 300000),
+    turn('m1', '2026-10-19T00:00:02Z', 300000, 20),
+    turn('m2', '2026-10-19T00:01:00Z', 300000),
+  ]);
+  writeLog('.claude/projects/fixture/main/subagents/agent.jsonl', [
+    turn('before', '2026-10-18T23:59:00Z', 100000),
+    turn('s1', '2026-10-19T00:05:01Z', 100000),
+    turn('s2', '2026-10-19T00:06:00Z', 100000),
+  ]);
+  writeLog('.claude/projects/other/main.jsonl', [turn('excluded', '2026-10-19T00:00:00Z', 99999999)]);
+  // Project substring follows sibling worktrees and moved repositories; --repo only counts merges.
+  for (const [name, cwd] of [
+    ['pilot', '/old/location/fixture-codex-pilot'],
+    ['web', '/old/location/fixture-web'],
+    ['moved', '/new/location/fixture'],
+    ['other', '/old/location/unrelated'],
+    ['repo-only', path.join(repo, 'worktree')],
+  ]) {
+    const usage = input => ({ input_tokens: input, cached_input_tokens: input / 2 });
+    writeLog(`.codex/sessions/2026/10/19/${name}.jsonl`, [
+      { type: 'session_meta', payload: { cwd } },
+      { timestamp: '2026-10-18T23:00:00Z', payload: { type: 'token_count', info: { total_token_usage: usage(1000000) } } },
+      { timestamp: '2026-10-19T12:00:00Z', payload: { type: 'token_count', info: { total_token_usage: usage(3000000) } } },
+      { timestamp: '2026-10-20T00:00:00Z', payload: { type: 'token_count', info: { total_token_usage: usage(5000000) } } },
+    ]);
+  }
+  // Supply a synthetic merge count without creating commits or inspecting a real repository.
+  const harness = 'import runpy, sys\naudit = runpy.run_path(sys.argv.pop(1))\naudit["main"].__globals__["merged_prs"] = lambda *args: 1\nsys.exit(audit["main"]())';
+  const result = spawnSync('python3', ['-c', harness, path.join(KIT, 'scripts/token-audit.py'), '--project', 'fixture', '--repo', repo,
+    '--since', '2026-10-19', '--until', '2026-10-19'], { env, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /\$2\.90 \(fixed API-price equivalent\)/);
+  assert.match(result.stdout, /matched Claude transcript files: 2/);
+  assert.match(result.stdout, /subagent share: 17%/);
+  assert.match(result.stdout, /main input above 250000 tokens context \(excess \/ total\): 16\.7%/);
+  assert.match(result.stdout, /MAIN cache-expired rewrites \(heuristic\): 1/);
+  assert.match(result.stdout, /subagent cache-expired rewrites \(heuristic\): 1/);
+  assert.match(result.stdout, /MAIN cold resumes \(>1h\): 1/);
+  assert.match(result.stdout, /subagent cold resumes \(>5m\): 1/);
+  assert.match(result.stdout, /merged PRs on main \(merge commits\): 1  -> \$2\.90\/PR/);
+  assert.match(result.stdout, /codex input tokens: 6\.0M \(50% cached; separate subscription\)/);
+});

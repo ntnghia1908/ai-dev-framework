@@ -6,6 +6,8 @@
 
 Chỉ ghi operational state không suy ra được từ Git, task contract hoặc accepted decisions.
 
+Ngân sách token của file: xem `docs/ai/workflow.md` §10.
+
 ## Current focus
 
 <!-- FILL: task / checkpoint đang làm. -->

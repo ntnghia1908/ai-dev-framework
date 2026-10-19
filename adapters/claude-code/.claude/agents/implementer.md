@@ -21,5 +21,6 @@ Không tự mở rộng scope, không tự thay đổi decision gate, không cla
 - Gom các sửa đổi cùng file vào ít Edit.
 - Lệnh có output dài thì lọc (`| tail -n 20`, `-q`); khi test fail chỉ lấy phần traceback cần thiết.
 - Chạy test theo Test policy: `docs/ai/project-profile.md` §8.
+- Giới hạn chờ lệnh: xem `docs/ai/workflow.md` §5 (Claude Code subagent: **5 phút**).
 - READY report ngắn: thay đổi chính, verification (lệnh + kết quả), finding ngoài scope, giới hạn.
 - Model mặc định của adapter là `sonnet`; task cần model khác phải ghi trong task contract, ORCHESTRATOR truyền override lúc delegate.
