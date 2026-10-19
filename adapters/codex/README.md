@@ -20,7 +20,8 @@ Task contract (APPROVED hoặc trong boundary đã duyệt): docs/tasks/<ID>.md
 Branch: <branch>   Base: <sha>
 Xác minh branch/HEAD/working tree trước khi sửa; lệch thì BLOCKED.
 Chỉ sửa trong Owned paths; không commit, push, tạo PR; không gọi CLI khác.
-Chạy required verification, trả READY report (thay đổi chính, verification + exit code, finding ngoài scope, giới hạn).
+Tái dùng helper / module có sẵn trước khi viết mới; xóa code bị thay (docs/ai/workflow.md §5).
+Chạy required verification, trả READY report (thay đổi chính, verification + exit code, finding ngoài scope, giới hạn; helper mới, AC → test, dòng + / − theo docs/ai/workflow.md §7).
 ```
 
 ORCHESTRATOR vẫn review độc lập (contract → diff gồm untracked → AC → tự chạy lại verification). Mọi mục bên dưới là **tùy chọn / thay thế**, không phải mặc định.
@@ -60,7 +61,8 @@ Plan ngắn:
 Xác minh remote / branch / HEAD / working tree trước khi sửa; lệch thì BLOCKED.
 Chỉ sửa trong Owned paths. Không gọi agent khác, không commit, không push, không tạo PR.
 Chạy required verification và dừng ở READY report: thay đổi chính, verification
-(lệnh + exit code + kết quả), finding ngoài scope, giới hạn.
+(lệnh + exit code + kết quả), finding ngoài scope, giới hạn; helper mới, AC → test,
+dòng + / −. Tái dùng trước khi viết, xóa code bị thay: docs/ai/workflow.md §5 / §7.
 ```
 
 ### Project config mẫu (tùy chọn: binding cố định, adopted project)
@@ -146,7 +148,8 @@ Plan ngắn:
 Xác minh remote / branch / HEAD / working tree trước khi sửa; lệch thì BLOCKED.
 Chỉ sửa trong Owned paths. Không gọi agent khác, không commit, không push, không tạo PR.
 Chạy required verification và dừng ở READY report: thay đổi chính, verification
-(lệnh + exit code + kết quả), finding ngoài scope, giới hạn.
+(lệnh + exit code + kết quả), finding ngoài scope, giới hạn; helper mới, AC → test,
+dòng + / −. Tái dùng trước khi viết, xóa code bị thay: docs/ai/workflow.md §5 / §7.
 ```
 
 ### Project config mẫu (tùy chọn: binding cố định, adopted project)
@@ -202,7 +205,8 @@ Plan ngắn:
 
 Làm theo AGENTS.md và task contract. Chạy required verification theo Test policy.
 Không commit, không push, không tạo PR. Dừng ở READY và trả READY report:
-thay đổi chính, verification (lệnh + kết quả), finding ngoài scope, giới hạn.
+thay đổi chính, verification (lệnh + kết quả), finding ngoài scope, giới hạn;
+helper mới, AC → test, dòng + / −. Tái dùng trước khi viết, xóa code bị thay: docs/ai/workflow.md §5 / §7.
 ```
 
 ## Checklist pilot

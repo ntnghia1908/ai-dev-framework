@@ -2,6 +2,8 @@
 
 ## v4.4 — 2026-10-08
 
+- 2026-10-19 — FW-GROWTH-01: quy tắc chống phình code từ audit một adopted project (`docs/audit/code-growth-report.md` của youtube-auto-short): contract có mục "Code bị thay / xóa" (`workflow.md` §4), tái dùng trước khi viết + xóa code bị thay (§5), READY report có AC → test (≤ ~3 test / AC), dòng thêm / xóa và helper mới (§7); template task thêm "Phải giữ nguyên" + "Code bị thay / xóa"; adapter Claude Code / Codex chỉ pointer.
+
 - 2026-10-19 — FW-TOKEN-01: thêm quy tắc tiết kiệm token tại `workflow.md` §4/§5/§9/§10, pointer trong adapter / current-state và `scripts/token-audit.py` không mặc định theo dự án; đo cost per merged task. Đo transcript thật do ORCHESTRATOR thực hiện trước khi xác nhận AC4.
 
 - 2026-10-19 — Codex IMPLEMENTER practice (adapter / template / script only; Core v4.4, checker, descriptor schema và `VERSION` không đổi): `adapters/codex/README.md` ghi trạng thái kiểm chứng theo vai trò, chuẩn bị máy Linux (bubblewrap + AppArmor userns), lệnh `codex exec` / `resume` / `review` đã chạy thật, giới hạn sandbox (không mạng / loopback → ORCHESTRATOR chạy test web + full suite), quota và số đo pilot từ một adopted project; thêm `scripts/codex-usage.py`; dòng `codex` trong ví dụ Danh sách IMPLEMENTER và pointer trong rule Claude Code.

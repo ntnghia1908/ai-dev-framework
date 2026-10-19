@@ -21,6 +21,12 @@ File này chỉ ghi lịch sử; rule hiện hành nằm ở canonical owner c�
 - Decision: HUMAN LEAD 2026-10-08.
 - Task: TASK-002-boundary-authorization-parallel.
 
+### FW-GROWTH-01 — 2026-10-19
+
+- Thay đổi: `docs/ai/workflow.md` §4 mục contract "Code bị thay / xóa"; §5 tái dùng trước khi viết; §7 READY report có AC → test, dòng thêm / xóa, helper mới. Template task + adapter dẫn chiếu owner.
+- Lý do: audit code growth (helper viết lại 7 lần, bug do viết lại hàm có sẵn, FEATURE xóa 3 %, test ≈ 1 : 1 code).
+- Task: FW-GROWTH-01 (`docs/tasks/FW-GROWTH-01.md`); PR/commit: chờ integration.
+
 ### FW-TOKEN-01 — 2026-10-19
 
 - Thay đổi: bổ sung quy tắc tiết kiệm token tại `docs/ai/workflow.md` §4/§5/§9/§10; adapter / current-state dẫn chiếu owner; thêm `scripts/token-audit.py` để đo cost per merged task, không mặc định theo dự án.

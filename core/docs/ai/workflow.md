@@ -58,6 +58,8 @@ Task là một lát cắt dọc vừa phải: behavior rõ, test và review đ�
 
 Contract có mục **Phải giữ nguyên**: liệt kê hành vi / action hiện có cần giữ để giảm vòng sửa sau review.
 
+Contract có mục **Code bị thay / xóa**: hàm, module, nhánh hoặc test mà task thay thế và phải xóa trong cùng task; ghi "không có" khi task chỉ thêm mới.
+
 Lifecycle phụ thuộc governance mode của project:
 
 - `task-approved`: `DRAFT → APPROVED → IN_PROGRESS → READY`.
@@ -90,6 +92,8 @@ TASK GRAPH → IMPLEMENT + REQUIRED VERIFICATION → REVIEW → FIX / RETEST / V
 ```
 
 IMPLEMENTER không chờ một lệnh lâu hơn thời hạn cache của subagent (Claude Code: **5 phút**). Verification dài (full suite, render, chạy thật) do ORCHESTRATOR chạy; contract ghi rõ phần verification mỗi bên phụ trách.
+
+**Tái dùng trước khi viết.** ORCHESTRATOR ghi vào delegation prompt helper / module có sẵn liên quan (tìm bằng grep). IMPLEMENTER tìm trước khi thêm hàm, helper hoặc module mới, và dùng lại khi hành vi khớp. READY report liệt kê helper mới, kèm lệnh đã tìm và lý do không dùng cái có sẵn. Code bị thay xóa ngay trong task, không để lại bản cũ.
 
 Chọn IMPLEMENTER theo **chi phí trên mỗi task merge**; ưu tiên adapter không tiêu quota của ORCHESTRATOR khi adapter đó còn quota.
 
@@ -138,6 +142,14 @@ Finding ngoài scope phải ghi nhận và báo HUMAN LEAD, không tự sửa.
 Required verification phải trực tiếp chứng minh AC và tất cả phải PASS trước READY. Review theo `task contract → diff → AC → verification evidence`; review không phải pha redesign.
 
 Blocking finding: AC fail, bug, regression, security risk thực tế, vi phạm authority/rule hoặc maintainability risk đáng kể. Non-blocking tối đa 3 note có giá trị; không chặn READY.
+
+READY report có:
+
+- bảng **AC → test**: mặc định ≤ ~3 hàm test / AC; các nhánh tương tự dùng parametrize; fixture / helper test dùng ở ≥ 2 file đưa vào helper chung; vượt ngân sách thì ghi lý do;
+- số dòng **thêm / xóa** của code ứng dụng và test (`git diff --numstat`);
+- helper mới theo §5.
+
+Review kiểm các mục trên cùng bản copy helper có sẵn (grep; công cụ phát hiện trùng lặp chạy tạm, không thêm dependency). Đo hiệu quả theo thời gian: tỉ lệ xóa / thêm theo `Type`, số test / AC.
 
 Single-agent vẫn bắt buộc có pha review riêng trước READY.
 

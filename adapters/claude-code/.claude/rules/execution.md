@@ -32,6 +32,8 @@ Mẫu delegation prompt:
 Contract: <path>; base commit: <SHA>; Implementation authorized: YES.
 Plan: <ngắn, trong owned paths>.
 Giới hạn chờ lệnh: xem docs/ai/workflow.md §5 (Claude Code subagent: 5 phút).
+Tái dùng: <helper / module có sẵn>; code bị thay: <mục Code bị thay / xóa của contract>.
+READY report theo docs/ai/workflow.md §5 / §7 (helper mới, AC → test, dòng + / −).
 ```
 
 ## Session
